@@ -43,7 +43,7 @@ export const formSchema = z.object({
   location: z.string().min(1, { message: 'Location is required.' }),
   category: z.string().min(1, { message: 'Category is required.' }),
   disability: z.boolean().default(false),
-  occupation: z.string().min(1, { message: 'Occupation is required.' }),
+  occupation: z.enum(['student', 'employed', 'unemployed', 'farmer', 'other'], { required_error: 'Occupation is required.' }),
 });
 
 export type FormSchemaType = z.infer<typeof formSchema>;
@@ -67,7 +67,7 @@ export function EligibilityForm() {
       location: 'Urban',
       category: 'General',
       disability: false,
-      occupation: 'Student',
+      occupation: 'student',
     },
   });
 
@@ -238,9 +238,20 @@ export function EligibilityForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Occupation</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g., Farmer, Student" {...field} />
-                    </FormControl>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                            <SelectTrigger>
+                            <SelectValue placeholder="Select your occupation" />
+                            </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                            <SelectItem value="student">Student</SelectItem>
+                            <SelectItem value="employed">Employed</SelectItem>
+                            <SelectItem value="unemployed">Unemployed</SelectItem>
+                            <SelectItem value="farmer">Farmer</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}

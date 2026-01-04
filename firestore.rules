@@ -5,8 +5,8 @@
  * This ruleset enforces a strict user-ownership model. All user-specific data, including profiles, recommendations, application statuses, and notifications, is nested within a user's private document tree. Access is granted only to the authenticated owner of that data. Publicly accessible data, like government schemes, is stored in a separate top-level collection and is read-only for all clients to prevent unauthorized modifications.
  *
  * ## Data Structure
- * - `/users/{userId}`: Each document represents a user's profile and serves as the root for their private data.
- * - `/users/{userId}/{subcollection}`: All personal user data (recommendations, applications, notifications) is organized into subcollections under the user's primary document.
+ * - `/users/{userId}`: Each document represents a user's private space.
+ * - `/users/{userId}/{subcollection}`: All personal user data (profile, recommendations, applications, notifications) is organized into subcollections under the user's primary document.
  * - `/governmentSchemes/{schemeId}`: A top-level collection for public government scheme information.
  *
  * ## Key Security Decisions
@@ -43,15 +43,7 @@ service cloud.firestore {
     function isOwner(userId) {
       return isSignedIn() && request.auth.uid == userId;
     }
-
-    /**
-     * Checks for ownership and ensures the document already exists.
-     * Crucial for safe update and delete operations.
-     */
-    function isExistingOwner(userId) {
-      return isOwner(userId) && resource != null;
-    }
-
+    
     /**
      * Validates that the `firebaseUid` field in a new UserProfile document
      * matches the document's ID, ensuring relational integrity.
@@ -88,18 +80,29 @@ service cloud.firestore {
     // ------------------------------------------------------------------------
 
     /**
-     * @description Controls access to user profile documents.
+     * @description Controls access to user data. The user's document itself is just a container.
      * @path /users/{userId}
-     * @allow (create) A new user can create their own profile document if their auth UID matches the document ID.
      * @deny (list) A user cannot list all documents in the `/users` collection to prevent user enumeration.
      * @principle Restricts access to a user's own data tree and prevents discovery of other users.
      */
     match /users/{userId} {
-      allow get: if isOwner(userId);
+      allow read, write: if false; // Disallow direct reads/writes to the container doc.
       allow list: if false;
-      allow create: if isOwner(userId) && hasValidProfileDataOnCreate(userId);
-      allow update: if isExistingOwner(userId) && hasImmutableProfileDataOnUpdate();
-      allow delete: if isExistingOwner(userId);
+      
+      // ----------------------------------------------------------------------
+      // Subcollection: userProfile
+      // ----------------------------------------------------------------------
+      /**
+       * @description Secures a user's private profile document.
+       * @path /users/{userId}/userProfile/{profileId}
+       * @allow A user can create, read, update, and delete their own profile document.
+       * @principle Enforces document ownership within a user's private subcollection.
+       */
+       match /userProfile/{profileId} {
+         allow read, delete: if isOwner(userId);
+         allow create: if isOwner(userId) && hasValidProfileDataOnCreate(userId);
+         allow update: if isOwner(userId) && hasImmutableProfileDataOnUpdate();
+       }
 
       // ----------------------------------------------------------------------
       // Subcollection: schemeRecommendations
@@ -108,16 +111,11 @@ service cloud.firestore {
       /**
        * @description Secures a user's private scheme recommendations.
        * @path /users/{userId}/schemeRecommendations/{recommendationId}
-       * @allow (create) A user can create a recommendation document within their own subcollection.
-       * @deny (get) An authenticated user cannot read recommendations belonging to another user.
+       * @allow A user can manage their own recommendation documents.
        * @principle Enforces document ownership within a user's private subcollection.
        */
       match /schemeRecommendations/{recommendationId} {
-        allow get: if isOwner(userId);
-        allow list: if isOwner(userId);
-        allow create: if isOwner(userId) && hasValidUserIdOnCreate(userId);
-        allow update: if isExistingOwner(userId) && hasImmutableUserIdOnUpdate();
-        allow delete: if isExistingOwner(userId);
+        allow read, write: if isOwner(userId);
       }
 
       // ----------------------------------------------------------------------
@@ -127,16 +125,11 @@ service cloud.firestore {
       /**
        * @description Secures a user's private application status trackers.
        * @path /users/{userId}/applicationStatuses/{applicationStatusId}
-       * @allow (list) A user can list all application statuses they own.
-       * @deny (update) A user cannot update an application status belonging to another user.
+       * @allow A user can manage their own application status documents.
        * @principle Enforces document ownership within a user's private subcollection.
        */
       match /applicationStatuses/{applicationStatusId} {
-        allow get: if isOwner(userId);
-        allow list: if isOwner(userId);
-        allow create: if isOwner(userId) && hasValidUserIdOnCreate(userId);
-        allow update: if isExistingOwner(userId) && hasImmutableUserIdOnUpdate();
-        allow delete: if isExistingOwner(userId);
+        allow read, write: if isOwner(userId);
       }
 
       // ----------------------------------------------------------------------
@@ -146,16 +139,11 @@ service cloud.firestore {
       /**
        * @description Secures a user's private notifications.
        * @path /users/{userId}/notifications/{notificationId}
-       * @allow (delete) A user can delete a notification they own.
-       * @deny (create) A user cannot create a notification for another user.
+       * @allow A user can manage their own notification documents.
        * @principle Enforces document ownership within a user's private subcollection.
        */
       match /notifications/{notificationId} {
-        allow get: if isOwner(userId);
-        allow list: if isOwner(userId);
-        allow create: if isOwner(userId) && hasValidUserIdOnCreate(userId);
-        allow update: if isExistingOwner(userId) && hasImmutableUserIdOnUpdate();
-        allow delete: if isExistingOwner(userId);
+        allow read, write: if isOwner(userId);
       }
     }
 
@@ -171,11 +159,8 @@ service cloud.firestore {
      * @principle Provides public read access while centralizing data management to a secure backend.
      */
     match /governmentSchemes/{schemeId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
+      allow read: if true;
+      allow write: if false;
     }
   }
 }

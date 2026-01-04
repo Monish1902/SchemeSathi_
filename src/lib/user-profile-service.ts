@@ -33,23 +33,28 @@ export function saveUserProfile(
   userId: string,
   profileData: FormSchemaType
 ) {
-  const profileRef = doc(db, 'users', userId);
+  // The document now lives at /users/{userId}/profile/main
+  // This is to align with the backend.json structure and rules for subcollections
+  const profileRef = doc(db, 'users', userId, 'userProfile', 'main');
+  
+  const dataToSave = {
+    ...profileData,
+    firebaseUid: userId, // Add firebaseUid to satisfy security rules
+    updatedAt: serverTimestamp(),
+  };
 
   // Use setDoc with merge to create or update.
   // The operation is non-blocking (no `await`).
   setDoc(
     profileRef,
-    {
-      ...profileData,
-      updatedAt: serverTimestamp(), // Keep track of the last update time.
-    },
+    dataToSave,
     { merge: true }
   ).catch(error => {
     // If the operation fails, create a detailed, contextual error.
     const permissionError = new FirestorePermissionError({
       path: profileRef.path,
       operation: 'write',
-      requestResourceData: profileData,
+      requestResourceData: dataToSave,
     });
     
     // Emit the error for a global handler to catch.
@@ -68,7 +73,7 @@ export async function getUserProfile(
   db: Firestore,
   userId: string
 ): Promise<FormSchemaType | null> {
-  const profileRef = doc(db, 'users', userId);
+  const profileRef = doc(db, 'users', userId, 'userProfile', 'main');
   const docSnap = await getDoc(profileRef);
 
   if (docSnap.exists()) {

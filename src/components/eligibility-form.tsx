@@ -50,6 +50,7 @@ export type FormSchemaType = z.infer<typeof formSchema>;
 
 export function EligibilityForm() {
   const [loading, setLoading] = useState(false);
+  const [isProfileLoading, setIsProfileLoading] = useState(true);
   const { toast } = useToast();
   const router = useRouter();
   const { user } = useUser();
@@ -72,6 +73,7 @@ export function EligibilityForm() {
 
   const loadProfile = useCallback(async () => {
     if (user && firestore) {
+      setIsProfileLoading(true);
       try {
         const profile = await getUserProfile(firestore, user.uid);
         if (profile) {
@@ -89,9 +91,13 @@ export function EligibilityForm() {
         toast({
           variant: 'destructive',
           title: 'Error',
-          description: 'Could not load your profile from the database.',
+          description: 'Could not load your profile.',
         });
+      } finally {
+        setIsProfileLoading(false);
       }
+    } else {
+        setIsProfileLoading(false);
     }
   }, [user, firestore, form, toast]);
 
@@ -132,7 +138,7 @@ export function EligibilityForm() {
       });
       
       // 4. Redirect to schemes page
-      router.push('/dashboard/schemes');
+      router.push('/dashboard');
 
     } catch (error) {
       console.error('An error occurred:', error);
@@ -144,6 +150,22 @@ export function EligibilityForm() {
     } finally {
       setLoading(false);
     }
+  }
+  
+  if (isProfileLoading) {
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>Your Information</CardTitle>
+                 <CardDescription>
+                    Loading your profile...
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="flex justify-center items-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </CardContent>
+        </Card>
+    )
   }
 
   return (

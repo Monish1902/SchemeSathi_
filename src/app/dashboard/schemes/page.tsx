@@ -1,6 +1,5 @@
 'use client';
 
-import { Badge } from '@/components/ui/badge';
 import {
   Card,
   CardContent,
@@ -8,76 +7,70 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { applications } from '@/lib/data';
+import { schemes } from '@/lib/data';
+import { Lightbulb, ArrowRight } from 'lucide-react';
+import { SchemeCard } from '@/components/scheme-card';
+import { useUser } from '@/firebase';
+import { useEffect, useState } from 'react';
+import { RecommendSchemesOutput } from '@/ai/flows/recommend-schemes-based-on-eligibility';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export default function MySchemesPage() {
+  const { user } = useUser();
+  const [recommendations, setRecommendations] = useState<RecommendSchemesOutput | null>(null);
+
+  useEffect(() => {
+    try {
+      const savedRecs = localStorage.getItem('schemeRecommendations');
+      if (savedRecs) {
+        setRecommendations(JSON.parse(savedRecs));
+      }
+    } catch (error) {
+      console.error("Could not load recommendations from localStorage", error);
+    }
+  }, []);
+  
+  const recommendedSchemes = recommendations
+    ? schemes.filter(scheme => 
+        recommendations.some(rec => rec.schemeName === scheme.name)
+      )
+    : [];
+
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">My Schemes</h1>
+        <h1 className="text-2xl font-bold tracking-tight">My Recommended Schemes</h1>
         <p className="text-muted-foreground">
-          A dashboard of your applied government schemes.
+          A list of government schemes recommended for you based on your profile.
         </p>
       </div>
-      <Card>
-        <CardHeader>
-          <CardTitle>Application History</CardTitle>
-          <CardDescription>
-            A complete history of your scheme applications.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Scheme Name</TableHead>
-                <TableHead>Application ID</TableHead>
-                <TableHead>Date Applied</TableHead>
-                <TableHead className="text-right">Status</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {applications.map((app) => (
-                <TableRow key={app.id}>
-                  <TableCell className="font-medium">
-                    {app.schemeName}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {app.id}
-                  </TableCell>
-                  <TableCell>{app.dateApplied}</TableCell>
-                  <TableCell className="text-right">
-                    <Badge
-                      variant={
-                        app.status === 'Approved'
-                          ? 'default'
-                          : app.status === 'Rejected'
-                          ? 'destructive'
-                          : 'secondary'
-                      }
-                      className={
-                        app.status === 'Approved'
-                          ? 'bg-green-500/20 text-green-700'
-                          : ''
-                      }
-                    >
-                      {app.status}
-                    </Badge>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+        {recommendedSchemes.length > 0 ? (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {recommendedSchemes.map((scheme) => (
+                <SchemeCard key={scheme.id} scheme={scheme} />
+            ))}
+            </div>
+        ) : (
+            <Card className="flex flex-col items-center justify-center text-center p-12">
+                <CardHeader>
+                    <div className="mx-auto bg-secondary p-3 rounded-full">
+                        <Lightbulb className="h-8 w-8 text-muted-foreground" />
+                    </div>
+                  <CardTitle>No Recommendations Yet</CardTitle>
+                  <CardDescription>
+                    Complete your profile to get personalized scheme recommendations from our AI.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90">
+                        <Link href="/dashboard/profile">
+                            Go to My Profile <ArrowRight className="ml-2 h-4 w-4" />
+                        </Link>
+                    </Button>
+                </CardContent>
+            </Card>
+        )}
     </div>
   );
 }

@@ -17,14 +17,19 @@ import {
   Lightbulb,
 } from 'lucide-react';
 import { SchemeCard } from '@/components/scheme-card';
-import { useUser } from '@/firebase';
+import { useUser, useFirestore } from '@/firebase';
 import { useEffect, useState } from 'react';
 import { RecommendSchemesOutput } from '@/ai/flows/recommend-schemes-based-on-eligibility';
 import { Button } from '@/components/ui/button';
+import { getUserProfile } from '@/lib/user-profile-service';
+import type { FormSchemaType } from '@/components/eligibility-form';
+
 
 export default function Dashboard() {
   const { user } = useUser();
+  const firestore = useFirestore();
   const [recommendations, setRecommendations] = useState<RecommendSchemesOutput | null>(null);
+  const [profile, setProfile] = useState<FormSchemaType | null>(null);
 
   useEffect(() => {
     try {
@@ -32,10 +37,20 @@ export default function Dashboard() {
       if (savedRecs) {
         setRecommendations(JSON.parse(savedRecs));
       }
-    } catch (error) {
+    } catch (error) => {
       console.error("Could not load recommendations from localStorage", error);
     }
   }, []);
+
+  useEffect(() => {
+    async function fetchProfile() {
+      if (user && firestore) {
+        const userProfile = await getUserProfile(firestore, user.uid);
+        setProfile(userProfile);
+      }
+    }
+    fetchProfile();
+  }, [user, firestore]);
   
   // Start with the two static schemes
   const staticRecommendedSchemeNames = [
@@ -48,10 +63,35 @@ export default function Dashboard() {
     ? recommendations.map(rec => rec.schemeName)
     : [];
 
+  // Get scheme names based on occupation
+  const occupationSchemeNames: string[] = [];
+  if (profile?.occupation) {
+    switch (profile.occupation) {
+      case 'farmer':
+        occupationSchemeNames.push('Annadata Sukhibhava Scheme', 'Rythu Bharosa Scheme');
+        break;
+      case 'student':
+        occupationSchemeNames.push(
+          'Dokka Seethamma Midday Meal Scheme (PM POSHAN)',
+          'AP Skill Development Schemes (APSSDC & PMKVY)',
+          'Thalliki Vandanam Scheme'
+        );
+        break;
+      case 'driver':
+        occupationSchemeNames.push('YSR Vahana Mitra Scheme (Auto Driver Sevalo)');
+        break;
+      case 'unemployed':
+        occupationSchemeNames.push('AP Skill Development Schemes (APSSDC & PMKVY)');
+        break;
+    }
+  }
+
+
   // Combine and deduplicate scheme names
   const allRecommendedSchemeNames = Array.from(new Set([
     ...staticRecommendedSchemeNames, 
-    ...aiRecommendedSchemeNames
+    ...aiRecommendedSchemeNames,
+    ...occupationSchemeNames,
   ]));
 
   // Filter the main schemes list to get the scheme objects

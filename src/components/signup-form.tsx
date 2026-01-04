@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -10,8 +11,8 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { useAuth } from '@/firebase';
-import { initiateGoogleSignIn, signInWithEmail } from '@/firebase/non-blocking-login';
-import { Chrome, Loader2 } from 'lucide-react';
+import { signUpWithEmail } from '@/firebase/non-blocking-login';
+import { Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -29,11 +30,12 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 const formSchema = z.object({
+  name: z.string().min(1, { message: 'Name is required.' }),
   email: z.string().email({ message: 'Please enter a valid email.' }),
-  password: z.string().min(1, { message: 'Password is required.' }),
+  password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
 });
 
-export function LoginForm() {
+export function SignUpForm() {
   const auth = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -41,25 +43,26 @@ export function LoginForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      name: '',
       email: '',
       password: '',
     },
   });
 
-  const handleGoogleSignIn = () => {
-    initiateGoogleSignIn(auth);
-  };
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
     try {
-      await signInWithEmail(auth, values.email, values.password);
+      await signUpWithEmail(auth, values.email, values.password, values.name);
       // Auth state change will trigger redirect in layout
+      toast({
+        title: 'Account Created!',
+        description: 'Welcome to SchemeSathi. Redirecting you to the dashboard...',
+      });
     } catch (error: any) {
       console.error(error);
       toast({
         variant: 'destructive',
-        title: 'Sign In Failed',
+        title: 'Sign Up Failed',
         description: error.message || 'An unknown error occurred.',
       });
     } finally {
@@ -70,14 +73,27 @@ export function LoginForm() {
   return (
     <Card className="w-full max-w-sm">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Welcome to SchemeSathi</CardTitle>
+        <CardTitle className="text-2xl">Create an Account</CardTitle>
         <CardDescription>
-          Sign in to discover personalized government schemes.
+          Get started with SchemeSathi today.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Full Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Your full name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="email"
@@ -106,30 +122,16 @@ export function LoginForm() {
             />
             <Button type="submit" className="w-full" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Sign In
+              Create Account
             </Button>
           </form>
         </Form>
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">
-              Or continue with
-            </span>
-          </div>
-        </div>
-        <Button onClick={handleGoogleSignIn} className="w-full" variant="outline">
-          <Chrome className="mr-2 h-4 w-4" />
-          Sign in with Google
-        </Button>
       </CardContent>
       <CardFooter className="flex justify-center text-sm">
         <p className="text-muted-foreground">
-          Don&apos;t have an account?{' '}
-          <Link href="/signup" className="text-primary hover:underline">
-            Sign up
+          Already have an account?{' '}
+          <Link href="/login" className="text-primary hover:underline">
+            Sign In
           </Link>
         </p>
       </CardFooter>

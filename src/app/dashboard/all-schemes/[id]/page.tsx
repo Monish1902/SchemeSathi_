@@ -13,8 +13,8 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, Check, FileText, Globe, Send } from 'lucide-react';
 import Link from 'next/link';
 
-export default function SchemeDetailPage({ params: { id } }: { params: { id: string } }) {
-  const scheme = schemes.find((s) => s.id === id);
+export default function SchemeDetailPage({ params }: { params: { id: string } }) {
+  const scheme = schemes.find((s) => s.id === params.id);
 
   if (!scheme) {
     notFound();

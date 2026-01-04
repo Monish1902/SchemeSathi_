@@ -285,6 +285,29 @@ export const schemes: Scheme[] = [
         "Medical examination records (routine check-ups)"
     ],
     applicationProcess: `Students are automatically covered upon enrollment in a government school. Program tracking is available on the PM POSHAN portal.`
+  },
+  {
+    id: 'rythu-bharosa',
+    name: 'Rythu Bharosa Scheme',
+    description: 'Rythu Bharosa is a farmer investment support scheme providing financial assistance to land-owning farmers to help with the costs of cultivation. The scheme aims to alleviate the financial burden on farmers and empower them to make timely investments in their crops, leading to increased productivity and income. It covers various pre-sowing and post-harvest expenses.',
+    category: 'Employment',
+    benefits: '₹13,500 per farmer family per year, provided in three installments.',
+    applyLink: 'https://gramawardsachivalayam.ap.gov.in/GSWS/Home/Main',
+    eligibilityCriteria: [
+        "Must be a land-owning farmer in Andhra Pradesh.",
+        "Small, marginal, and tenant farmers are also eligible.",
+        "The farmer must be a permanent resident of the state.",
+        "Must have a valid Aadhaar card.",
+        "Family should not include government employees or income taxpayers."
+    ],
+    documentsRequired: [
+        "Aadhaar Card",
+        "Land ownership documents (Pattadar Passbook)",
+        "Bank account details (Passbook)",
+        "Residential Certificate",
+        "Passport-size Photograph"
+    ],
+    applicationProcess: `Farmers can apply through the local Village/Ward Secretariat (Sachivalayam) or online through the official portal. Verification is conducted by village revenue officers.`
   }
 ];
 

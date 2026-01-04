@@ -5,7 +5,7 @@ export const schemes: Scheme[] = [
     id: 'aadabidda-nidhi',
     name: 'Aadabidda Nidhi Scheme',
     description: 'Aadabidda Nidhi is a flagship women empowerment scheme providing ₹1,500 per month directly to eligible women aged 18-59 years through Direct Benefit Transfer (DBT). It aims to reduce the gender-income gap and promote economic independence among vulnerable women in Andhra Pradesh. Beneficiaries also receive free bus travel on all APSRTC buses within the state. The scheme covers over 80 lakh women with transparent digital verification.',
-    category: 'Finance',
+    category: 'Women',
     benefits: '₹1,500 per month (₹18,000 annually) and free bus travel on APSRTC buses.',
     applyLink: 'https://gsws-nbm.ap.gov.in/NBM/',
     eligibilityCriteria: [
@@ -30,7 +30,7 @@ export const schemes: Scheme[] = [
     id: 'annadata-sukhibhava',
     name: 'Annadata Sukhibhava Scheme',
     description: 'Annadata Sukhibhava provides ₹20,000 annual financial assistance to small and marginal farmers in three installments via Direct Benefit Transfer. The scheme includes subsidized seeds, fertilizers, and disaster compensation to support agricultural activities and manage crop failures. Application is made through Raithu Seva Kendrams (Farmer Service Centers). The scheme covers all crop types including cereals, pulses, oilseeds, and horticultural crops.',
-    category: 'Employment',
+    category: 'Farmer',
     benefits: '₹20,000 annual financial assistance, subsidized seeds, fertilizers, and disaster compensation.',
     applyLink: 'https://annadatasukhibhava.ap.gov.in',
     eligibilityCriteria: [
@@ -56,7 +56,7 @@ export const schemes: Scheme[] = [
     id: 'ysr-vahana-mitra',
     name: 'YSR Vahana Mitra Scheme (Auto Driver Sevalo)',
     description: 'YSR Vahana Mitra provides ₹15,000 annual financial assistance to self-employed auto and taxi drivers to support maintenance costs, insurance, and periodic vehicle fitness requirements. The scheme uses transparent digital verification through the NBM portal with multiple status tracking stages. Beneficiaries can track application status using Aadhaar-OTP verification and receive payments through Aadhaar Enabled Payment System (AePS).',
-    category: 'Employment',
+    category: 'Driver',
     benefits: '₹15,000 annual financial assistance for vehicle maintenance and insurance.',
     applyLink: 'https://gsws-nbm.ap.gov.in/NBM/',
     eligibilityCriteria: [
@@ -85,7 +85,7 @@ export const schemes: Scheme[] = [
     id: 'thalliki-vandanam',
     name: 'Thalliki Vandanam Scheme',
     description: 'Thalliki Vandanam provides ₹15,000 annual financial assistance to mothers/guardians of school children to promote enrollment and reduce dropout rates. Payments are directly transferred to mother\'s accounts via DBT, conditional on maintaining 75% school attendance. The scheme covers approximately 67 lakh students across AP. Beneficiary lists are verified through schools and gram/ward secretariat data.',
-    category: 'Education',
+    category: 'Student',
     benefits: '₹15,000 annual financial assistance to mothers/guardians.',
     applyLink: 'https://gsws-nbm.ap.gov.in/NBM/',
     eligibilityCriteria: [
@@ -143,7 +143,7 @@ export const schemes: Scheme[] = [
     id: 'ysr-cheyutha',
     name: 'YSR Cheyutha Scheme',
     description: 'YSR Cheyutha provides ₹75,000 over four years (₹18,750 annually) to eligible women aged 45-60 from SC/ST/BC/Minority communities for livelihood empowerment. The scheme partners with corporations to create income-generating opportunities like grocery franchises and animal husbandry businesses. The multi-year structure supports sustained livelihood activities with dedicated tracking through the "Cheyutha Dashboard".',
-    category: 'Finance',
+    category: 'Women',
     benefits: '₹75,000 financial assistance over four years for livelihood activities.',
     applyLink: 'https://gsws-nbm.ap.gov.in/NBM/',
     eligibilityCriteria: [
@@ -203,7 +203,7 @@ export const schemes: Scheme[] = [
     id: 'ap-skill-development',
     name: 'AP Skill Development Schemes (APSSDC & PMKVY)',
     description: 'AP Skill Development operates 100+ centers offering free training in IT, healthcare, hospitality, manufacturing, and emerging technologies. The scheme partners with major corporations for internationally-recognized certifications and provides placement assistance, ensuring a high job placement rate. Training covers 24 sectors with 99+ job roles and includes entrepreneurship support.',
-    category: 'Employment',
+    category: 'General',
     benefits: 'Free vocational training, industry-recognized certifications, and job placement assistance.',
     applyLink: 'https://naipunyam.ap.gov.in',
     eligibilityCriteria: [
@@ -233,7 +233,7 @@ export const schemes: Scheme[] = [
     id: 'ntr-bharosa-pension',
     name: 'NTR Bharosa Pension Scheme',
     description: 'NTR Bharosa Pension provides monthly financial assistance from ₹4,000 to ₹15,000 to various categories including the elderly, widows, disabled, and other vulnerable groups. Over 64 lakh households benefit from direct bank transfers. The scheme was digitally upgraded in 2025 for improved processing and real-time verification. A spouse category pension was added for widows of deceased pensioners.',
-    category: 'Finance',
+    category: 'General',
     benefits: 'Monthly pension ranging from ₹4,000 to ₹15,000.',
     applyLink: 'https://sspensions.ap.gov.in',
     eligibilityCriteria: [
@@ -262,7 +262,7 @@ export const schemes: Scheme[] = [
     id: 'dokka-seethamma-midday-meal',
     name: 'Dokka Seethamma Midday Meal Scheme (PM POSHAN)',
     description: 'Dokka Seethamma Midday Meal provides free nutritious meals to over 50 lakh government school students daily, including rice/grains, protein, vegetables, and supplements. Zone-wise customized menus were implemented in 2025. The scheme includes health monitoring, micronutrient supplementation, and attendance tracking with feedback mechanisms for menu refinement.',
-    category: 'Education',
+    category: 'Student',
     benefits: 'Free daily nutritious meals for government school students.',
     applyLink: 'https://pmposhan.education.gov.in',
     eligibilityCriteria: [
@@ -290,7 +290,7 @@ export const schemes: Scheme[] = [
     id: 'rythu-bharosa',
     name: 'Rythu Bharosa Scheme',
     description: 'Rythu Bharosa is a farmer investment support scheme providing financial assistance to land-owning farmers to help with the costs of cultivation. The scheme aims to alleviate the financial burden on farmers and empower them to make timely investments in their crops, leading to increased productivity and income. It covers various pre-sowing and post-harvest expenses.',
-    category: 'Employment',
+    category: 'Farmer',
     benefits: '₹13,500 per farmer family per year, provided in three installments.',
     applyLink: 'https://gramawardsachivalayam.ap.gov.in/GSWS/Home/Main',
     eligibilityCriteria: [

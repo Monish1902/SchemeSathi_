@@ -2,7 +2,7 @@ export type Scheme = {
   id: string;
   name: string;
   description: string;
-  category: 'Education' | 'Health' | 'Finance' | 'Housing' | 'Employment';
+  category: 'Women' | 'Farmer' | 'Driver' | 'Student' | 'Health' | 'Housing' | 'General';
   benefits: string;
   applyLink: string;
   eligibilityCriteria: string[];

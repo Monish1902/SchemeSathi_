@@ -3,7 +3,6 @@
 import { Logo } from '@/components/logo';
 import {
   Bell,
-  ClipboardCheck,
   LayoutDashboard,
   ScrollText,
   Search,
@@ -19,9 +18,7 @@ import { Button } from '@/components/ui/button';
 
 const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { href: '/dashboard/eligibility', icon: ScrollText, label: 'Eligibility' },
-  { href: '/dashboard/schemes', icon: ScrollText, label: 'Schemes' },
-  { href: '/dashboard/applications', icon: ClipboardCheck, label: 'Applications' },
+  { href: '/dashboard/schemes', icon: ScrollText, label: 'My Schemes' },
   { href: '/dashboard/notifications', icon: Bell, label: 'Notifications' },
   { href: '/dashboard/settings', icon: Settings, label: 'Settings' },
 ];
@@ -49,7 +46,7 @@ export default function DashboardLayout({
               href={item.href}
               className={cn(
                 'transition-colors hover:text-foreground',
-                pathname === item.href
+                pathname.startsWith(item.href)
                   ? 'text-foreground'
                   : 'text-muted-foreground'
               )}

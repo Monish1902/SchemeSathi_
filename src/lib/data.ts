@@ -1,3 +1,4 @@
+
 import type { Scheme, Application } from '@/lib/types';
 
 export const schemes: Scheme[] = [
@@ -117,7 +118,7 @@ export const schemes: Scheme[] = [
     name: 'Dr. NTR Vaidya Seva Scheme',
     description: 'Dr. NTR Vaidya Seva provides cashless healthcare coverage up to ₹25 lakh per beneficiary annually through a network of 10,000+ empaneled hospitals. The scheme covers emergency care, planned hospitalization, and 949+ specialized treatments including cancer, kidney transplant, cardiac surgeries, and neurological disorders without upfront payment. It is managed by Dr. Nandamuri Taraka Rama Rao Vaidya Seva Trust with real-time online claim processing.',
     category: 'Health',
-    benefits: 'Cashless healthcare coverage up to ₹25 lakh per beneficiary annually.',
+    benefits: 'Upto ₹25 lakhs',
     applyLink: 'https://drntrvaidyaseva.ap.gov.in',
     eligibilityCriteria: [
         "All Andhra Pradesh residents eligible for coverage",

@@ -42,7 +42,7 @@ const recommendSchemesPrompt = ai.definePrompt({
   name: 'recommendSchemesPrompt',
   input: {schema: RecommendSchemesInputSchema},
   output: {schema: RecommendSchemesOutputSchema},
-  prompt: `You are an expert advisor on Indian government schemes. Based on the user's details below, recommend the most relevant schemes.
+  prompt: `You are an expert advisor on Indian government schemes. Based on the user's details below, recommend the most relevant schemes. Prioritize schemes that directly match the user's occupation. For example, if the user is a 'Farmer', prioritize farmer-centric schemes. If they are a 'Student', prioritize educational schemes.
 
 User Details:
 Age: {{{age}}}
@@ -54,7 +54,7 @@ Category: {{{category}}}
 Disability: {{{disability}}}
 Occupation: {{{occupation}}}
 
-Consider various government schemes and recommend those for which the user is eligible. For each recommendation, provide a detailed reasoning that explains exactly which eligibility criteria the user meets. For example, "You are eligible because your annual income of X is within the Y limit for this scheme." Only include schemes the user qualifies for.
+Consider various government schemes and recommend only those for which the user is eligible. For each recommendation, provide a detailed reasoning that explains exactly which eligibility criteria the user meets. For example, "You are eligible because your annual income of X is within the Y limit for this scheme." Only include schemes the user qualifies for.
 
 Format your output as a JSON array of scheme recommendations, each with schemeName and reasoning. Do not include a match score.
 `,

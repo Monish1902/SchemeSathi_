@@ -84,8 +84,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
         </Link>
-        <Link href="/dashboard/applications">
-          <Card className='hover:border-primary transition-colors'>
+        <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Approved Schemes
@@ -97,7 +96,6 @@ export default function Dashboard() {
               <p className="text-xs text-muted-foreground">Ready to avail benefits</p>
             </CardContent>
           </Card>
-        </Link>
       </div>
 
       <section>

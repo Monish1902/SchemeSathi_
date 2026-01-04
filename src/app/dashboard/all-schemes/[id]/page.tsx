@@ -9,13 +9,14 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Check, FileText, Globe, Send } from 'lucide-react';
 import Link from 'next/link';
 
 export default function SchemeDetailPage({ params }: { params: { id: string } }) {
-  const scheme = schemes.find((s) => s.id === params.id);
+  // The 'id' is directly on params, no unwrapping needed for this client component.
+  const { id } = params;
+  const scheme = schemes.find((s) => s.id === id);
 
   if (!scheme) {
     notFound();

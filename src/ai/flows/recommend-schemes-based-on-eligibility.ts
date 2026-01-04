@@ -42,7 +42,7 @@ const recommendSchemesPrompt = ai.definePrompt({
   name: 'recommendSchemesPrompt',
   input: {schema: RecommendSchemesInputSchema},
   output: {schema: RecommendSchemesOutputSchema},
-  prompt: `You are an expert advisor on Indian government schemes. Based on the user's details below, recommend the most relevant schemes. Prioritize schemes that directly match the user's occupation. For example, if the user is a 'Farmer', prioritize farmer-centric schemes. If they are a 'Student', prioritize educational schemes.
+  prompt: `You are an expert advisor on Indian government schemes. Based on the user's details below, you must recommend exactly three schemes.
 
 User Details:
 Age: {{{age}}}
@@ -54,9 +54,14 @@ Category: {{{category}}}
 Disability: {{{disability}}}
 Occupation: {{{occupation}}}
 
-Consider various government schemes and recommend only those for which the user is eligible. For each recommendation, provide a detailed reasoning that explains exactly which eligibility criteria the user meets. For example, "You are eligible because your annual income of X is within the Y limit for this scheme." Only include schemes the user qualifies for.
+Your recommendations must follow these specific rules:
+1.  **Health Scheme (1 Scheme):** Recommend one scheme that is primarily focused on health or medical benefits.
+2.  **Occupation-Based Scheme (1 Scheme):** Recommend one scheme that is directly relevant to the user's stated occupation (e.g., a farmer scheme for a 'Farmer', a student scheme for a 'Student').
+3.  **Income/Housing Scheme (1 Scheme):** Recommend one scheme related to financial assistance based on their income level or a housing scheme.
 
-Format your output as a JSON array of scheme recommendations, each with schemeName and reasoning. Do not include a match score.
+For each of the three recommendations, provide a detailed reasoning that explains exactly which eligibility criteria the user meets. For example, "You are eligible because your annual income of X is within the Y limit for this scheme." Only include schemes the user qualifies for.
+
+Format your output as a JSON array of exactly three scheme recommendations, each with a schemeName and detailed reasoning. Do not include a match score.
 `,
 });
 

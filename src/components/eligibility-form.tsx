@@ -33,7 +33,6 @@ import { useUser } from '@/firebase';
 
 const formSchema = z.object({
   name: z.string().min(1, { message: 'Name is required.' }),
-  email: z.string().email({ message: 'Invalid email address.' }),
   age: z.coerce.number().min(1, { message: 'Age is required.' }),
   gender: z.enum(['male', 'female', 'other'], {
     required_error: 'Gender is required.',
@@ -58,7 +57,6 @@ export function EligibilityForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      email: '',
       age: 30,
       gender: 'male',
       annualIncome: 50000,
@@ -87,9 +85,6 @@ export function EligibilityForm() {
       // Do not overwrite form fields if they already have localStorage data
       if (!form.getValues('name') && user.displayName) {
         form.setValue('name', user.displayName);
-      }
-      if (!form.getValues('email') && user.email) {
-        form.setValue('email', user.email);
       }
     }
   }, [user, form]);
@@ -154,19 +149,6 @@ export function EligibilityForm() {
                         <FormLabel>Name</FormLabel>
                         <FormControl>
                         <Input placeholder="Your full name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                    )}
-                />
-                 <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                        <Input type="email" placeholder="your@email.com" {...field} disabled />
                         </FormControl>
                         <FormMessage />
                     </FormItem>

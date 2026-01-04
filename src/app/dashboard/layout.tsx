@@ -13,7 +13,6 @@ import {
   SidebarMenuButton,
 } from '@/components/ui/sidebar';
 import { Logo } from '@/components/logo';
-import { UserNav } from '@/components/user-nav';
 import {
   LayoutDashboard,
   ScrollText,
@@ -25,6 +24,7 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Input } from '@/components/ui/input';
+import { ClientOnlyUserNav } from '@/components/client-only-user-nav';
 
 const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -88,7 +88,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
               />
             </div>
-            <UserNav />
+            <ClientOnlyUserNav />
           </header>
           <main className="flex-1 p-4 sm:p-6">{children}</main>
         </SidebarInset>

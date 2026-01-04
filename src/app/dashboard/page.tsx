@@ -1,4 +1,5 @@
-import { Button } from '@/components/ui/button';
+'use client';
+
 import {
   Card,
   CardContent,
@@ -6,49 +7,94 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
-import { applications, schemes } from '@/lib/data';
-import { ArrowRight, PlusCircle } from 'lucide-react';
+import { schemes, applications } from '@/lib/data';
+import {
+  ArrowRight,
+  CheckCircle,
+  FileText,
+  GanttChart,
+} from 'lucide-react';
 import { SchemeCard } from '@/components/scheme-card';
+import { useUser } from '@/firebase';
+import { useEffect, useState } from 'react';
+import { RecommendSchemesOutput } from '@/ai/flows/recommend-schemes-based-on-eligibility';
 
 export default function Dashboard() {
-  const recommendedSchemes = schemes.slice(0, 3);
+  const { user } = useUser();
+  const popularSchemes = schemes.slice(0, 3);
+  const [recommendations, setRecommendations] = useState<RecommendSchemesOutput | null>(null);
+
+  useEffect(() => {
+    try {
+      const savedRecs = localStorage.getItem('schemeRecommendations');
+      if (savedRecs) {
+        setRecommendations(JSON.parse(savedRecs));
+      }
+    } catch (error) {
+      console.error("Could not load recommendations from localStorage", error);
+    }
+  }, []);
+
+  const approvedSchemesCount = applications.filter(
+    (app) => app.status === 'Approved'
+  ).length;
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Welcome to SchemeSathi</h1>
-          <p className="text-muted-foreground">Your personalized guide to government schemes.</p>
-        </div>
-        <Button asChild className="w-full md:w-auto bg-accent text-accent-foreground hover:bg-accent/90">
-          <Link href="/dashboard/eligibility">
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Check Eligibility Now
-          </Link>
-        </Button>
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">
+          Welcome, {user?.displayName?.split(' ')[0] || 'User'}!
+        </h1>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Eligible Schemes
+            </CardTitle>
+            <FileText className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{recommendations?.length ?? 0}</div>
+            <p className="text-xs text-muted-foreground">Click to view</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Applied Schemes
+            </CardTitle>
+            <GanttChart className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{applications.length}</div>
+            <p className="text-xs text-muted-foreground">Click to view</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Approved Schemes
+            </CardTitle>
+            <CheckCircle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{approvedSchemesCount}</div>
+            <p className="text-xs text-muted-foreground">Click to view</p>
+          </CardContent>
+        </Card>
       </div>
 
       <section>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">Recommended for You</h2>
-          <Button variant="link" asChild>
-            <Link href="/dashboard/schemes">
-              View All <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
+          <h2 className="text-2xl font-semibold tracking-tight">
+            Popular Schemes
+          </h2>
         </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {recommendedSchemes.map((scheme) => (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {popularSchemes.map((scheme) => (
             <SchemeCard key={scheme.id} scheme={scheme} />
           ))}
         </div>

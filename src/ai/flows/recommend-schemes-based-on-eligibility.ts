@@ -18,7 +18,7 @@ const RecommendSchemesInputSchema = z.object({
   location: z.string().describe('The location of the user.'),
   category: z.string().describe('The category of the user (e.g., SC, ST, OBC, General).'),
   disability: z.boolean().describe('Whether the user has a disability.'),
-  occupation: z.enum(['student', 'employed', 'unemployed', 'farmer', 'other']).describe('The occupation of the user.'),
+  occupation: z.enum(['student', 'employed', 'unemployed', 'farmer', 'driver', 'weaver', 'daily worker', 'other']).describe('The occupation of the user.'),
 });
 export type RecommendSchemesInput = z.infer<typeof RecommendSchemesInputSchema>;
 

@@ -124,7 +124,7 @@ export default function MySchemesPage() {
                 <CardTitle>No Recommendations Yet</CardTitle>
                 <CardDescription>
                   Complete your eligibility profile to get personalized scheme
-                  recommendations.
+                  recommendations. These will be based on the details saved in your profile.
                 </CardDescription>
               </CardHeader>
               <CardContent>

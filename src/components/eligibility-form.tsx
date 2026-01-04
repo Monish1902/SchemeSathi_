@@ -24,17 +24,13 @@ import {
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useState } from 'react';
-import {
-  recommendSchemes,
-  RecommendSchemesInput,
-  RecommendSchemesOutput,
-} from '@/ai/flows/recommend-schemes-based-on-eligibility';
+import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Loader2 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { Badge } from './ui/badge';
 
 const formSchema = z.object({
+  name: z.string().min(1, { message: 'Name is required.' }),
+  email: z.string().email({ message: 'Invalid email address.' }),
   age: z.coerce.number().min(1, { message: 'Age is required.' }),
   gender: z.enum(['male', 'female', 'other'], {
     required_error: 'Gender is required.',
@@ -49,12 +45,13 @@ const formSchema = z.object({
 
 export function EligibilityForm() {
   const [loading, setLoading] = useState(false);
-  const [recommendations, setRecommendations] = useState<RecommendSchemesOutput | null>(null);
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      name: 'User',
+      email: 'user@example.com',
       age: 18,
       gender: 'male',
       annualIncome: 50000,
@@ -68,64 +65,57 @@ export function EligibilityForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
-    setRecommendations(null);
-    try {
-      const result = await recommendSchemes(values as RecommendSchemesInput);
-      setRecommendations(result);
-    } catch (error) {
-      console.error('Error getting recommendations:', error);
-      toast({
-        variant: 'destructive',
-        title: 'An error occurred',
-        description: 'Failed to get scheme recommendations. Please try again.',
-      });
-    } finally {
-      setLoading(false);
-    }
-  }
+    // In a real app, you would save these values to a database.
+    // We'll simulate a save operation here.
+    console.log('Saving profile data:', values);
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
-  if (recommendations) {
-    return (
-      <div>
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">Your Recommended Schemes</h2>
-          <Button variant="outline" onClick={() => setRecommendations(null)}>
-            Start Over
-          </Button>
-        </div>
-        <div className="space-y-4">
-          {recommendations.map((rec, index) => (
-            <Card key={index}>
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle>{rec.schemeName}</CardTitle>
-                    <CardDescription className="pt-4">
-                        <Badge variant="secondary" className="mb-2">Eligibility Match</Badge>
-                        <p className='text-card-foreground'>{rec.reasoning}</p>
-                    </CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-            </Card>
-          ))}
-        </div>
-      </div>
-    );
+    toast({
+      title: 'Profile Saved!',
+      description: 'Your information has been updated successfully.',
+    });
+
+    setLoading(false);
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Eligibility Details</CardTitle>
+        <CardTitle>Your Information</CardTitle>
         <CardDescription>
-          Fill in your details to get personalized scheme recommendations.
+          Keep your details up-to-date to receive the best scheme recommendations.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Name</FormLabel>
+                        <FormControl>
+                        <Input placeholder="Your full name" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+                 <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                        <Input type="email" placeholder="your@email.com" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
               <FormField
                 control={form.control}
                 name="age"
@@ -262,7 +252,7 @@ export function EligibilityForm() {
                 control={form.control}
                 name="disability"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 col-span-1 md:col-span-2">
                     <div className="space-y-0.5">
                       <FormLabel className="text-base">Disability</FormLabel>
                       <FormDescription>
@@ -281,10 +271,10 @@ export function EligibilityForm() {
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Finding Schemes...
+                  Saving...
                 </>
               ) : (
-                'Find My Schemes'
+                'Save Profile'
               )}
             </Button>
           </form>

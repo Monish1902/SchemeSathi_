@@ -53,55 +53,6 @@ export default function Dashboard() {
           ))}
         </div>
       </section>
-
-      <section>
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>Application Status</CardTitle>
-                <CardDescription>Track your submitted applications here.</CardDescription>
-              </div>
-              <Button variant="outline" asChild>
-                <Link href="/dashboard/applications">View All Applications</Link>
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Scheme Name</TableHead>
-                  <TableHead>Date Applied</TableHead>
-                  <TableHead className="text-right">Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {applications.slice(0, 3).map((app) => (
-                  <TableRow key={app.id}>
-                    <TableCell className="font-medium">{app.schemeName}</TableCell>
-                    <TableCell>{app.dateApplied}</TableCell>
-                    <TableCell className="text-right">
-                      <Badge
-                        variant={
-                          app.status === 'Approved'
-                            ? 'default'
-                            : app.status === 'Rejected'
-                            ? 'destructive'
-                            : 'secondary'
-                        }
-                        className={app.status === 'Approved' ? 'bg-green-500/20 text-green-700' : ''}
-                      >
-                        {app.status}
-                      </Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      </section>
     </div>
   );
 }

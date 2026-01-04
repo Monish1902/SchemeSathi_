@@ -13,9 +13,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, Check, FileText, Globe, Send } from 'lucide-react';
 import Link from 'next/link';
 
-export default function SchemeDetailPage({ params }: { params: { id: string } }) {
-  // The 'id' is directly on params, no unwrapping needed for this client component.
-  const { id } = params;
+export default function SchemeDetailPage({ params: { id } }: { params: { id: string } }) {
   const scheme = schemes.find((s) => s.id === id);
 
   if (!scheme) {

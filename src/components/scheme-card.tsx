@@ -1,14 +1,27 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Scheme } from '@/lib/types';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Briefcase, GraduationCap, Heart, House, Leaf, PiggyBank } from 'lucide-react';
 import Link from 'next/link';
+import { Badge } from './ui/badge';
 
 // A simple function to extract a monetary value from the benefits string.
 // This is a basic implementation and might need to be more robust.
 const getBenefitAmount = (benefits: string): string | null => {
     const match = benefits.match(/₹[0-9,]+/);
     return match ? match[0] : null;
+}
+
+const categoryIcons: { [key in Scheme['category']]: React.ReactNode } = {
+  Finance: <PiggyBank className="h-4 w-4 mr-2" />,
+  Employment: <Briefcase className="h-4 w-4 mr-2" />,
+  Education: <GraduationCap className="h-4 w-4 mr-2" />,
+  Health: <Heart className="h-4 w-4 mr-2" />,
+  Housing: <House className="h-4 w-4 mr-2" />,
+};
+
+const getCategoryIcon = (category: Scheme['category']) => {
+  return categoryIcons[category] || null;
 }
 
 
@@ -18,8 +31,14 @@ export function SchemeCard({ scheme }: { scheme: Scheme }) {
     <Card className="flex h-full flex-col justify-between">
       <div>
         <CardHeader>
-          <CardTitle className="text-lg">{scheme.name}</CardTitle>
-          <p className="text-xs text-muted-foreground">ID: {scheme.id}</p>
+          <div className="flex justify-between items-start">
+            <CardTitle className="text-lg">{scheme.name}</CardTitle>
+            <Badge variant="secondary" className="flex items-center shrink-0">
+              {getCategoryIcon(scheme.category)}
+              {scheme.category}
+            </Badge>
+          </div>
+          <p className="text-xs text-muted-foreground pt-1">ID: {scheme.id}</p>
         </CardHeader>
         <CardContent>
           <CardDescription>{scheme.description}</CardDescription>

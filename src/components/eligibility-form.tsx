@@ -23,15 +23,16 @@ import {
 } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Loader2 } from 'lucide-react';
 import { recommendSchemes } from '@/ai/flows/recommend-schemes-based-on-eligibility';
 import { useRouter } from 'next/navigation';
-import { useUser } from '@/firebase';
+import { useUser, useFirestore } from '@/firebase';
+import { saveUserProfile, getUserProfile } from '@/lib/user-profile-service';
 
-const formSchema = z.object({
+export const formSchema = z.object({
   name: z.string().min(1, { message: 'Name is required.' }),
   age: z.coerce.number().min(1, { message: 'Age is required.' }),
   gender: z.enum(['male', 'female', 'other'], {
@@ -45,13 +46,14 @@ const formSchema = z.object({
   occupation: z.string().min(1, { message: 'Occupation is required.' }),
 });
 
-type FormSchemaType = z.infer<typeof formSchema>;
+export type FormSchemaType = z.infer<typeof formSchema>;
 
 export function EligibilityForm() {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
   const { user } = useUser();
+  const firestore = useFirestore();
 
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
@@ -68,50 +70,65 @@ export function EligibilityForm() {
     },
   });
 
-  useEffect(() => {
-    try {
-      const savedData = localStorage.getItem('eligibilityProfile');
-      if (savedData) {
-        const parsedData = JSON.parse(savedData);
-        form.reset(parsedData);
+  const loadProfile = useCallback(async () => {
+    if (user && firestore) {
+      try {
+        const profile = await getUserProfile(firestore, user.uid);
+        if (profile) {
+          form.reset(profile);
+          toast({
+            title: 'Profile Loaded',
+            description: 'Your saved information has been loaded.',
+          });
+        } else if (user.displayName) {
+          // If no profile, but user has a display name, pre-fill it.
+          form.setValue('name', user.displayName);
+        }
+      } catch (error) {
+        console.error("Could not load user profile from Firestore", error);
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: 'Could not load your profile from the database.',
+        });
       }
-    } catch (error) {
-      console.error("Could not load user profile from localStorage", error);
     }
-  }, [form]);
+  }, [user, firestore, form, toast]);
+
 
   useEffect(() => {
-    if (user) {
-      // Do not overwrite form fields if they already have localStorage data
-      if (!form.getValues('name') && user.displayName) {
-        form.setValue('name', user.displayName);
-      }
-    }
-  }, [user, form]);
+    loadProfile();
+  }, [loadProfile]);
 
 
   async function onSubmit(values: FormSchemaType) {
+    if (!user || !firestore) {
+       toast({
+        variant: 'destructive',
+        title: 'Not signed in',
+        description: 'You must be signed in to save your profile.',
+      });
+      return;
+    }
     setLoading(true);
     try {
-      // 1. Save profile to localStorage
-      localStorage.setItem('eligibilityProfile', JSON.stringify(values));
-      console.log('Saving profile data:', values);
+      // 1. Save profile to Firestore
+      saveUserProfile(firestore, user.uid, values);
 
       toast({
         title: 'Profile Saved!',
-        description: 'Your information has been updated successfully.',
+        description: 'Your information has been saved to your account.',
       });
 
       // 2. Fetch recommendations from AI
       const recommendations = await recommendSchemes(values);
 
-      // 3. Save recommendations to localStorage
+      // 3. Save recommendations to localStorage for quick access on other pages
       localStorage.setItem('schemeRecommendations', JSON.stringify(recommendations));
-      console.log('Saved recommendations:', recommendations);
 
       toast({
         title: 'Recommendations Updated!',
-        description: 'New scheme recommendations are available in the "My Schemes" tab.',
+        description: 'New scheme recommendations are available for you.',
       });
       
       // 4. Redirect to schemes page
@@ -237,7 +254,7 @@ export function EligibilityForm() {
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select your category" />
-                        </SelectTrigger>
+                        </Trigger>
                       </FormControl>
                       <SelectContent>
                         <SelectItem value="General">General</SelectItem>
@@ -305,7 +322,7 @@ export function EligibilityForm() {
               />
             </div>
 
-            <Button type="submit" disabled={loading} className="w-full md:w-auto bg-accent text-accent-foreground hover:bg-accent/90">
+            <Button type="submit" disabled={loading || !user} className="w-full md:w-auto bg-accent text-accent-foreground hover:bg-accent/90">
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

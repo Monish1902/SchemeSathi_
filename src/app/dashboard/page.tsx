@@ -37,11 +37,28 @@ export default function Dashboard() {
     }
   }, []);
   
-  const recommendedSchemes = recommendations
-    ? schemes.filter(scheme => 
-        recommendations.some(rec => rec.schemeName === scheme.name)
-      )
+  // Start with the two static schemes
+  const staticRecommendedSchemeNames = [
+    'Dr. NTR Vaidya Seva Scheme',
+    'INDIRAMMA Housing Scheme'
+  ];
+
+  // Get scheme names from AI recommendations
+  const aiRecommendedSchemeNames = recommendations
+    ? recommendations.map(rec => rec.schemeName)
     : [];
+
+  // Combine and deduplicate scheme names
+  const allRecommendedSchemeNames = Array.from(new Set([
+    ...staticRecommendedSchemeNames, 
+    ...aiRecommendedSchemeNames
+  ]));
+
+  // Filter the main schemes list to get the scheme objects
+  const recommendedSchemes = schemes.filter(scheme =>
+    allRecommendedSchemeNames.includes(scheme.name)
+  );
+
 
   const approvedSchemesCount = applications.filter(
     (app) => app.status === 'Approved'
@@ -65,7 +82,7 @@ export default function Dashboard() {
               <FileText className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{recommendations?.length ?? 0}</div>
+              <div className="text-2xl font-bold">{recommendedSchemes.length}</div>
               <p className="text-xs text-muted-foreground">Based on your profile</p>
             </CardContent>
           </Card>

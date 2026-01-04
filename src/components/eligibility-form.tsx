@@ -29,6 +29,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { Loader2 } from 'lucide-react';
 import { recommendSchemes } from '@/ai/flows/recommend-schemes-based-on-eligibility';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@/firebase';
 
 const formSchema = z.object({
   name: z.string().min(1, { message: 'Name is required.' }),
@@ -51,12 +52,13 @@ export function EligibilityForm() {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
+  const { user } = useUser();
 
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: 'User',
-      email: 'user@example.com',
+      name: '',
+      email: '',
       age: 30,
       gender: 'male',
       annualIncome: 50000,
@@ -79,6 +81,19 @@ export function EligibilityForm() {
       console.error("Could not load user profile from localStorage", error);
     }
   }, [form]);
+
+  useEffect(() => {
+    if (user) {
+      // Do not overwrite form fields if they already have localStorage data
+      if (!form.getValues('name') && user.displayName) {
+        form.setValue('name', user.displayName);
+      }
+      if (!form.getValues('email') && user.email) {
+        form.setValue('email', user.email);
+      }
+    }
+  }, [user, form]);
+
 
   async function onSubmit(values: FormSchemaType) {
     setLoading(true);
@@ -151,7 +166,7 @@ export function EligibilityForm() {
                     <FormItem>
                         <FormLabel>Email</FormLabel>
                         <FormControl>
-                        <Input type="email" placeholder="your@email.com" {...field} />
+                        <Input type="email" placeholder="your@email.com" {...field} disabled />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -215,7 +230,7 @@ export function EligibilityForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Location</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select your location type" />
@@ -236,7 +251,7 @@ export function EligibilityForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Social Category</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select your category" />
@@ -262,7 +277,7 @@ export function EligibilityForm() {
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                         className="flex flex-row space-x-4"
                       >
                         <FormItem className="flex items-center space-x-2 space-y-0">

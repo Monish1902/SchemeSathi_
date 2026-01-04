@@ -254,7 +254,7 @@ export function EligibilityForm() {
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select your category" />
-                        </Trigger>
+                        </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         <SelectItem value="General">General</SelectItem>

@@ -1,7 +1,7 @@
 'use client';
 
 import { schemes } from '@/lib/data';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import {
   Card,
   CardContent,
@@ -13,8 +13,10 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, Check, FileText, Globe, Send } from 'lucide-react';
 import Link from 'next/link';
 
-export default function SchemeDetailPage({ params }: { params: { id: string } }) {
-  const scheme = schemes.find((s) => s.id === params.id);
+export default function SchemeDetailPage() {
+  const params = useParams();
+  const id = params.id as string;
+  const scheme = schemes.find((s) => s.id === id);
 
   if (!scheme) {
     notFound();

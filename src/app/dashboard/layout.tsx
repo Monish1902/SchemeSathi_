@@ -18,6 +18,7 @@ const navItems = [
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/dashboard/schemes', label: 'My Schemes' },
   { href: '/dashboard/all-schemes', label: 'All Schemes' },
+  { href: '/dashboard/applications', label: 'My Applications' },
   { href: '/dashboard/profile', label: 'My Profile' },
 ];
 

@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Scheme } from '@/lib/types';
 import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 // A simple function to extract a monetary value from the benefits string.
 // This is a basic implementation and might need to be more robust.
@@ -32,9 +33,9 @@ export function SchemeCard({ scheme }: { scheme: Scheme }) {
       </div>
       <CardFooter>
         <Button variant="link" asChild className="w-full justify-end text-accent-foreground hover:text-accent-foreground/80 p-0">
-          <a href={scheme.applyLink}>
+          <Link href={`/dashboard/all-schemes/${scheme.id}`}>
             View Details <ArrowRight className="ml-2 h-4 w-4" />
-          </a>
+          </Link>
         </Button>
       </CardFooter>
     </Card>

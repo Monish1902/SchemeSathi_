@@ -3,15 +3,11 @@ export type Scheme = {
   name: string;
   description: string;
   category: 'Education' | 'Health' | 'Finance' | 'Housing' | 'Employment';
-  eligibility: {
-    age?: { min?: number; max?: number };
-    annualIncome?: { max: number };
-    category?: string[];
-    disability?: boolean;
-    location?: string[];
-  };
   benefits: string;
   applyLink: string;
+  eligibilityCriteria: string[];
+  documentsRequired: string[];
+  applicationProcess: string;
 };
 
 export type Application = {

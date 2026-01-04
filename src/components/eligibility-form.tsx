@@ -23,10 +23,12 @@ import {
 } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Loader2 } from 'lucide-react';
+import { recommendSchemes } from '@/ai/flows/recommend-schemes-based-on-eligibility';
+import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
   name: z.string().min(1, { message: 'Name is required.' }),
@@ -43,16 +45,19 @@ const formSchema = z.object({
   occupation: z.string().min(1, { message: 'Occupation is required.' }),
 });
 
+type FormSchemaType = z.infer<typeof formSchema>;
+
 export function EligibilityForm() {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const router = useRouter();
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: 'User',
       email: 'user@example.com',
-      age: 18,
+      age: 30,
       gender: 'male',
       annualIncome: 50000,
       familySize: 4,
@@ -63,19 +68,55 @@ export function EligibilityForm() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  useEffect(() => {
+    try {
+      const savedData = localStorage.getItem('eligibilityProfile');
+      if (savedData) {
+        const parsedData = JSON.parse(savedData);
+        form.reset(parsedData);
+      }
+    } catch (error) {
+      console.error("Could not load user profile from localStorage", error);
+    }
+  }, [form]);
+
+  async function onSubmit(values: FormSchemaType) {
     setLoading(true);
-    // In a real app, you would save these values to a database.
-    // We'll simulate a save operation here.
-    console.log('Saving profile data:', values);
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      // 1. Save profile to localStorage
+      localStorage.setItem('eligibilityProfile', JSON.stringify(values));
+      console.log('Saving profile data:', values);
 
-    toast({
-      title: 'Profile Saved!',
-      description: 'Your information has been updated successfully.',
-    });
+      toast({
+        title: 'Profile Saved!',
+        description: 'Your information has been updated successfully.',
+      });
 
-    setLoading(false);
+      // 2. Fetch recommendations from AI
+      const recommendations = await recommendSchemes(values);
+
+      // 3. Save recommendations to localStorage
+      localStorage.setItem('schemeRecommendations', JSON.stringify(recommendations));
+      console.log('Saved recommendations:', recommendations);
+
+      toast({
+        title: 'Recommendations Updated!',
+        description: 'New scheme recommendations are available in the "My Schemes" tab.',
+      });
+      
+      // 4. Redirect to schemes page
+      router.push('/dashboard/schemes');
+
+    } catch (error) {
+      console.error('An error occurred:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Uh oh! Something went wrong.',
+        description: 'There was a problem saving your profile or fetching recommendations.',
+      });
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -274,7 +315,7 @@ export function EligibilityForm() {
                   Saving...
                 </>
               ) : (
-                'Save Profile'
+                'Save Profile & Find Schemes'
               )}
             </Button>
           </form>

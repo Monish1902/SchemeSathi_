@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import {
   Card,
@@ -22,11 +22,27 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RecommendSchemesOutput } from '@/ai/flows/recommend-schemes-based-on-eligibility';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Loader2 } from 'lucide-react';
 
 export default function MySchemesPage() {
-  // TODO: Replace with actual recommendations based on saved eligibility
-  const [recommendations, setRecommendations] = useState<RecommendSchemesOutput | null>([]);
+  const [recommendations, setRecommendations] = useState<RecommendSchemesOutput | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    try {
+      const savedRecs = localStorage.getItem('schemeRecommendations');
+      if (savedRecs) {
+        setRecommendations(JSON.parse(savedRecs));
+      } else {
+        setRecommendations([]);
+      }
+    } catch (error) {
+        console.error("Could not load recommendations from localStorage", error);
+        setRecommendations([]);
+    } finally {
+        setLoading(false);
+    }
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -37,7 +53,7 @@ export default function MySchemesPage() {
         </p>
       </div>
 
-      <Tabs defaultValue="applied">
+      <Tabs defaultValue="recommended">
         <TabsList className="grid w-full grid-cols-2 md:w-[400px]">
           <TabsTrigger value="applied">Applied Schemes</TabsTrigger>
           <TabsTrigger value="recommended">Recommended Schemes</TabsTrigger>
@@ -96,7 +112,17 @@ export default function MySchemesPage() {
           </Card>
         </TabsContent>
         <TabsContent value="recommended">
-          {recommendations && recommendations.length > 0 ? (
+          {loading ? (
+             <Card className="flex flex-col items-center justify-center text-center p-12">
+                <CardHeader>
+                    <Loader2 className="mx-auto h-8 w-8 animate-spin text-muted-foreground" />
+                    <CardTitle>Finding Schemes...</CardTitle>
+                    <CardDescription>
+                        We are analyzing your profile to find the best schemes for you.
+                    </CardDescription>
+                </CardHeader>
+            </Card>
+          ) : recommendations && recommendations.length > 0 ? (
             <div className="space-y-4">
               {recommendations.map((rec, index) => (
                 <Card key={index}>
@@ -104,9 +130,9 @@ export default function MySchemesPage() {
                     <div className="flex justify-between items-start">
                       <div>
                         <CardTitle>{rec.schemeName}</CardTitle>
-                        <CardDescription className="pt-4">
-                          <Badge variant="secondary" className="mb-2">
-                            Eligibility Match
+                         <CardDescription className="pt-4">
+                           <Badge variant="secondary" className="mb-2">
+                            Eligibility Reasoning
                           </Badge>
                           <p className="text-card-foreground">
                             {rec.reasoning}

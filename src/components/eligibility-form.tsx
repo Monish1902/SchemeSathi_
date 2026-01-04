@@ -31,8 +31,8 @@ import {
 } from '@/ai/flows/recommend-schemes-based-on-eligibility';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Loader2 } from 'lucide-react';
-import { Progress } from './ui/progress';
 import { useToast } from '@/hooks/use-toast';
+import { Badge } from './ui/badge';
 
 const formSchema = z.object({
   age: z.coerce.number().min(1, { message: 'Age is required.' }),
@@ -88,10 +88,10 @@ export function EligibilityForm() {
     return (
       <div>
         <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold">Your Recommended Schemes</h2>
-            <Button variant="outline" onClick={() => setRecommendations(null)}>
-                Start Over
-            </Button>
+          <h2 className="text-2xl font-bold">Your Recommended Schemes</h2>
+          <Button variant="outline" onClick={() => setRecommendations(null)}>
+            Start Over
+          </Button>
         </div>
         <div className="space-y-4">
           {recommendations.map((rec, index) => (
@@ -100,12 +100,10 @@ export function EligibilityForm() {
                 <div className="flex justify-between items-start">
                   <div>
                     <CardTitle>{rec.schemeName}</CardTitle>
-                    <CardDescription className="pt-2">{rec.reasoning}</CardDescription>
-                  </div>
-                  <div className="flex flex-col items-center gap-2 w-24">
-                    <span className="font-bold text-lg text-primary">{rec.matchScore}%</span>
-                    <Progress value={rec.matchScore} className="h-2" />
-                    <span className="text-xs text-muted-foreground">Match Score</span>
+                    <CardDescription className="pt-4">
+                        <Badge variant="secondary" className="mb-2">Eligibility Match</Badge>
+                        <p className='text-card-foreground'>{rec.reasoning}</p>
+                    </CardDescription>
                   </div>
                 </div>
               </CardHeader>

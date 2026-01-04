@@ -24,8 +24,11 @@ export type RecommendSchemesInput = z.infer<typeof RecommendSchemesInputSchema>;
 
 const SchemeRecommendationSchema = z.object({
   schemeName: z.string().describe('The name of the recommended government scheme.'),
-  matchScore: z.number().describe('A score indicating how well the scheme matches the user (0-100).'),
-  reasoning: z.string().describe('The reasoning behind recommending this scheme to the user.'),
+  reasoning: z
+    .string()
+    .describe(
+      'A detailed explanation of why the user is eligible for this scheme, referencing their specific details (like age, income, etc.) against the scheme\'s requirements.'
+    ),
 });
 
 const RecommendSchemesOutputSchema = z.array(SchemeRecommendationSchema);
@@ -51,9 +54,9 @@ Category: {{{category}}}
 Disability: {{{disability}}}
 Occupation: {{{occupation}}}
 
-Consider various government schemes and recommend those for which the user is eligible. Provide a match score (0-100) and reasoning for each recommendation. Only include schemes the user qualifies for.
+Consider various government schemes and recommend those for which the user is eligible. For each recommendation, provide a detailed reasoning that explains exactly which eligibility criteria the user meets. For example, "You are eligible because your annual income of X is within the Y limit for this scheme." Only include schemes the user qualifies for.
 
-Format your output as a JSON array of scheme recommendations, each with schemeName, matchScore, and reasoning.
+Format your output as a JSON array of scheme recommendations, each with schemeName and reasoning. Do not include a match score.
 `,
 });
 

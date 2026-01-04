@@ -172,9 +172,9 @@ export const schemes: Scheme[] = [
   {
     id: 'indiramma-housing',
     name: 'INDIRAMMA Housing Scheme',
-    description: 'INDIRAMMA Housing Scheme provides a subsidy (₹5 lakh for SC/ST, ₹45,000-₹80,000 for General/BC) to construct permanent houses. The scheme approved G+1 (two-storey) construction in 2025, allowing vertical expansion. Identification is done through Gram Sabhas and Ward Sabhas. Beneficiaries receive construction assistance with regular monitoring by rural development officials.',
+    description: 'INDIRAMMA Housing Scheme provides a subsidy to construct permanent houses. The scheme approved G+1 (two-storey) construction in 2025, allowing vertical expansion. Identification is done through Gram Sabhas and Ward Sabhas. Beneficiaries receive construction assistance with regular monitoring by rural development officials.',
     category: 'Housing',
-    benefits: 'Subsidy of ₹5 lakh for SC/ST and ₹45,000-₹80,000 for General/BC categories for house construction.',
+    benefits: 'Subsidy for house construction.',
     applyLink: 'https://housing.ap.gov.in',
     eligibilityCriteria: [
         "Below Poverty Line (BPL) families",

@@ -48,18 +48,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <SidebarMenu>
               {navItems.map((item) => (
                 <SidebarMenuItem key={item.href}>
-                  <Link href={item.href} passHref>
-                    <SidebarMenuButton
-                      isActive={pathname === item.href}
-                      asChild
-                      tooltip={item.label}
-                    >
-                      <a>
-                        <item.icon />
-                        <span>{item.label}</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </Link>
+                  <SidebarMenuButton
+                    as={Link}
+                    href={item.href}
+                    isActive={pathname === item.href}
+                    tooltip={item.label}
+                  >
+                    <item.icon />
+                    <span>{item.label}</span>
+                  </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -67,18 +64,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <SidebarFooter>
             <SidebarMenu>
               <SidebarMenuItem>
-                <Link href="/dashboard/settings" passHref>
-                  <SidebarMenuButton
-                    isActive={pathname === '/dashboard/settings'}
-                    asChild
-                    tooltip="Settings"
-                  >
-                    <a>
-                      <Settings />
-                      <span>Settings</span>
-                    </a>
-                  </SidebarMenuButton>
-                </Link>
+                <SidebarMenuButton
+                  as={Link}
+                  href="/dashboard/settings"
+                  isActive={pathname === '/dashboard/settings'}
+                  tooltip="Settings"
+                >
+                  <Settings />
+                  <span>Settings</span>
+                </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarFooter>

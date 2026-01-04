@@ -19,6 +19,7 @@ import {
   Bell,
   Settings,
   Search,
+  LayoutDashboard,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -27,6 +28,7 @@ import { ClientOnlyUserNav } from '@/components/client-only-user-nav';
 import { ModeToggle } from '@/components/mode-toggle';
 
 const navItems = [
+  { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { href: '/dashboard/eligibility', icon: ScrollText, label: 'Eligibility' },
   { href: '/dashboard/schemes', icon: ScrollText, label: 'Schemes' },
   { href: '/dashboard/applications', icon: ClipboardCheck, label: 'Applications' },

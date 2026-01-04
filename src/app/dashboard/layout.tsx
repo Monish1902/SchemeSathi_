@@ -1,26 +1,21 @@
 'use client';
 
 import { Logo } from '@/components/logo';
-import {
-  Bell,
-  LayoutDashboard,
-  ScrollText,
-  Search,
-  Settings,
-  CircleUserRound,
-} from 'lucide-react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { ClientOnlyUserNav } from '@/components/client-only-user-nav';
 import { ModeToggle } from '@/components/mode-toggle';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { useUser } from '@/firebase';
+import { useEffect } from 'react';
+import { Loader2, Search } from 'lucide-react';
 
 const navItems = [
-  { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { href: '/dashboard/schemes', icon: ScrollText, label: 'My Schemes' },
-  { href: '/dashboard/profile', icon: CircleUserRound, label: 'My Profile' },
+  { href: '/dashboard', label: 'Dashboard' },
+  { href: '/dashboard/schemes', label: 'My Schemes' },
+  { href: '/dashboard/profile', label: 'My Profile' },
 ];
 
 export default function DashboardLayout({
@@ -29,6 +24,23 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const { user, isUserLoading } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isUserLoading && !user) {
+      router.push('/login');
+    }
+  }, [user, isUserLoading, router]);
+
+  if (isUserLoading || !user) {
+    return (
+      <div className="flex min-h-screen w-full flex-col items-center justify-center">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+        <p className="mt-4 text-muted-foreground">Loading your dashboard...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen w-full flex-col">

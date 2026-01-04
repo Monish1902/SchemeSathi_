@@ -7,6 +7,7 @@ import {
   ScrollText,
   Search,
   Settings,
+  CircleUserRound,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -19,8 +20,7 @@ import { Button } from '@/components/ui/button';
 const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { href: '/dashboard/schemes', icon: ScrollText, label: 'My Schemes' },
-  { href: '/dashboard/notifications', icon: Bell, label: 'Notifications' },
-  { href: '/dashboard/settings', icon: Settings, label: 'Settings' },
+  { href: '/dashboard/profile', icon: CircleUserRound, label: 'My Profile' },
 ];
 
 export default function DashboardLayout({

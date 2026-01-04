@@ -18,11 +18,15 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { applications } from '@/lib/data';
-import { EligibilityForm } from '@/components/eligibility-form';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { RecommendSchemesOutput } from '@/ai/flows/recommend-schemes-based-on-eligibility';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 
 export default function MySchemesPage() {
-  const [recommendations, setRecommendations] = useState<any[] | null>(null);
+  // TODO: Replace with actual recommendations based on saved eligibility
+  const [recommendations, setRecommendations] = useState<RecommendSchemesOutput | null>([]);
 
   return (
     <div className="space-y-6">
@@ -92,7 +96,46 @@ export default function MySchemesPage() {
           </Card>
         </TabsContent>
         <TabsContent value="recommended">
-          <EligibilityForm />
+          {recommendations && recommendations.length > 0 ? (
+            <div className="space-y-4">
+              {recommendations.map((rec, index) => (
+                <Card key={index}>
+                  <CardHeader>
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <CardTitle>{rec.schemeName}</CardTitle>
+                        <CardDescription className="pt-4">
+                          <Badge variant="secondary" className="mb-2">
+                            Eligibility Match
+                          </Badge>
+                          <p className="text-card-foreground">
+                            {rec.reasoning}
+                          </p>
+                        </CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <Card className="flex flex-col items-center justify-center text-center p-12">
+              <CardHeader>
+                <CardTitle>No Recommendations Yet</CardTitle>
+                <CardDescription>
+                  Complete your eligibility profile to get personalized scheme
+                  recommendations.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90">
+                  <Link href="/dashboard/profile">
+                    Go to My Profile <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
       </Tabs>
     </div>

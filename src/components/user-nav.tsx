@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { CircleUserRound, LayoutDashboard, LogOut, Settings } from 'lucide-react';
+import { CircleUserRound, LogOut } from 'lucide-react';
 import Link from 'next/link';
 
 export function UserNav() {
@@ -35,21 +35,9 @@ export function UserNav() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link href="/dashboard">
-              <LayoutDashboard className="mr-2 h-4 w-4" />
-              <span>Dashboard</span>
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href="/dashboard/settings">
+            <Link href="/dashboard/profile">
               <CircleUserRound className="mr-2 h-4 w-4" />
               <span>Profile</span>
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href="/dashboard/settings">
-              <Settings className="mr-2 h-4 w-4" />
-              <span>Settings</span>
             </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>

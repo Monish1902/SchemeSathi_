@@ -37,7 +37,7 @@ export default function Dashboard() {
       if (savedRecs) {
         setRecommendations(JSON.parse(savedRecs));
       }
-    } catch (error) => {
+    } catch (error) {
       console.error("Could not load recommendations from localStorage", error);
     }
   }, []);

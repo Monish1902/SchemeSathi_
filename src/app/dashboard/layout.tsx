@@ -18,7 +18,6 @@ import { getUserProfile } from '@/lib/user-profile-service';
 const navItems = [
   { href: '/dashboard/schemes', label: 'My Schemes' },
   { href: '/dashboard/all-schemes', label: 'All Schemes' },
-  { href: '/dashboard/applications', label: 'My Applications' },
   { href: '/dashboard/eligibility', label: 'My Profile' },
 ];
 

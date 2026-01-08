@@ -9,6 +9,7 @@
  */
 
 import {ai} from '@/ai/genkit';
+import {googleAI} from '@genkit-ai/google-genai';
 import {z} from 'genkit';
 
 const SummarizeSchemeDetailsInputSchema = z.object({
@@ -27,6 +28,7 @@ export async function summarizeSchemeDetails(input: SummarizeSchemeDetailsInput)
 
 const prompt = ai.definePrompt({
   name: 'summarizeSchemeDetailsPrompt',
+  model: googleAI.model('gemini-1.5-flash-latest'),
   input: {schema: SummarizeSchemeDetailsInputSchema},
   output: {schema: SummarizeSchemeDetailsOutputSchema},
   prompt: `You are an AI assistant that summarizes government schemes, highlighting key benefits and requirements so users can assess their relevance quickly.

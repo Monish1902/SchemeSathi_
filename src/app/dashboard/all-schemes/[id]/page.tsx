@@ -1,3 +1,4 @@
+
 'use client';
 
 import { schemes } from '@/lib/data';
@@ -91,7 +92,7 @@ export default function SchemeDetailPage() {
             </div>
             <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 shrink-0">
               <a href={scheme.applyLink} target="_blank" rel="noopener noreferrer">
-                Apply Now <Globe className="ml-2 h-4 w-4" />
+                Know More <Globe className="ml-2 h-4 w-4" />
               </a>
             </Button>
           </div>

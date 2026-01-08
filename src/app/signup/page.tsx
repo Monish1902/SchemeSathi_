@@ -13,7 +13,8 @@ export default function SignUpPage() {
 
   useEffect(() => {
     if (!isUserLoading && user) {
-      router.replace('/dashboard/about');
+      // For new sign-ups, redirect directly to the eligibility form.
+      router.replace('/dashboard/eligibility');
     }
   }, [user, isUserLoading, router]);
 

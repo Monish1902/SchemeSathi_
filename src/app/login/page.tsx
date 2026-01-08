@@ -13,6 +13,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (!isUserLoading && user) {
+      // The dashboard layout will handle redirection based on profile status.
       router.replace('/dashboard/about');
     }
   }, [user, isUserLoading, router]);

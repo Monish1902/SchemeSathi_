@@ -9,17 +9,18 @@ import { ClientOnlyUserNav } from '@/components/client-only-user-nav';
 import { ModeToggle } from '@/components/mode-toggle';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { useUser } from '@/firebase';
-import { useEffect } from 'react';
+import { useUser, useFirestore } from '@/firebase';
+import { useEffect, useState } from 'react';
 import { Loader2, Search } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu } from 'lucide-react';
+import { getUserProfile } from '@/lib/user-profile-service';
 
 const navItems = [
   { href: '/dashboard/schemes', label: 'My Schemes' },
   { href: '/dashboard/all-schemes', label: 'All Schemes' },
   { href: '/dashboard/applications', label: 'My Applications' },
-  { href: '/dashboard/profile', label: 'My Profile' },
+  { href: '/dashboard/eligibility', label: 'My Profile' },
 ];
 
 export default function DashboardLayout({
@@ -29,15 +30,34 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
   const { user, isUserLoading } = useUser();
+  const firestore = useFirestore();
   const router = useRouter();
+  const [isProfileChecked, setIsProfileChecked] = useState(false);
 
   useEffect(() => {
-    if (!isUserLoading && !user) {
-      router.push('/login');
-    }
-  }, [user, isUserLoading, router]);
+    if (isUserLoading) return;
 
-  if (isUserLoading || !user) {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+
+    // Check for user profile existence
+    const checkProfile = async () => {
+      const profile = await getUserProfile(firestore, user.uid);
+      if (!profile && pathname !== '/dashboard/eligibility') {
+        // If profile doesn't exist and user is not on the eligibility page, redirect them.
+        router.replace('/dashboard/eligibility');
+      } else {
+        // If profile exists or they are on the right page, allow access.
+        setIsProfileChecked(true);
+      }
+    };
+
+    checkProfile();
+  }, [user, isUserLoading, router, firestore, pathname]);
+
+  if (isUserLoading || !user || !isProfileChecked) {
     return (
       <div className="flex min-h-screen w-full flex-col items-center justify-center">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />

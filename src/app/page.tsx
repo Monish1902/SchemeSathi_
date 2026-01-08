@@ -13,6 +13,8 @@ export default function Home() {
   useEffect(() => {
     if (!isUserLoading) {
       if (user) {
+        // Redirect to eligibility if it's a new user, otherwise to about page.
+        // The dashboard layout will handle the final redirection logic.
         router.replace('/dashboard/about');
       } else {
         router.replace('/login');

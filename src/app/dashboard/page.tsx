@@ -16,7 +16,7 @@ export default function Dashboard() {
           Welcome, {user?.displayName?.split(' ')[0] || 'User'}!
         </h1>
         <p className="text-muted-foreground">
-          Here is a quick overview of your profile and schemes.
+          You can view your eligible schemes or track your applications.
         </p>
       </div>
 

@@ -70,7 +70,7 @@ export default function DashboardLayout({
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/20">
       <header className="sticky top-0 z-50 flex h-16 items-center gap-4 border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:px-6">
-        <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
+        <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 lg:gap-6">
           <Link
             href="/dashboard/about"
             className="flex items-center gap-2 text-lg font-semibold md:text-base"
@@ -82,7 +82,7 @@ export default function DashboardLayout({
               key={item.href}
               href={item.href}
               className={cn(
-                'px-3 py-1.5 rounded-md transition-all duration-300',
+                'px-3 py-1.5 rounded-md transition-all duration-300 text-base',
                 pathname === item.href
                   ? 'bg-primary text-primary-foreground font-semibold shadow-sm'
                   : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'

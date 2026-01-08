@@ -47,8 +47,8 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-screen w-full flex-col">
-      <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
+    <div className="flex min-h-screen w-full flex-col bg-muted/20">
+      <header className="sticky top-0 z-50 flex h-16 items-center gap-4 border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:px-6">
         <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
           <Link
             href="/dashboard"
@@ -61,13 +61,16 @@ export default function DashboardLayout({
               key={item.href}
               href={item.href}
               className={cn(
-                'transition-colors hover:text-foreground',
-                pathname === item.href // Use strict equality for active link
+                'relative transition-colors hover:text-foreground',
+                pathname === item.href
                   ? 'text-foreground font-semibold'
                   : 'text-muted-foreground'
               )}
             >
               {item.label}
+               {pathname === item.href && (
+                <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-primary rounded-full" />
+              )}
             </Link>
           ))}
         </nav>
@@ -97,7 +100,7 @@ export default function DashboardLayout({
                   className={cn(
                     'transition-colors hover:text-foreground',
                     pathname === item.href
-                      ? 'text-foreground'
+                      ? 'text-foreground font-semibold'
                       : 'text-muted-foreground'
                   )}
                 >

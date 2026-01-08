@@ -113,8 +113,8 @@ export default function Dashboard() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Link href="/dashboard/schemes">
-          <Card className='hover:border-primary transition-colors'>
+        <Card className='hover:border-primary transition-all duration-300 hover:shadow-lg hover:-translate-y-1'>
+          <Link href="/dashboard/schemes">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Eligible Schemes
@@ -125,10 +125,10 @@ export default function Dashboard() {
               <div className="text-2xl font-bold">{recommendedSchemes.length}</div>
               <p className="text-xs text-muted-foreground">Based on your profile</p>
             </CardContent>
-          </Card>
-        </Link>
-        <Link href="/dashboard/applications">
-          <Card className='hover:border-primary transition-colors'>
+          </Link>
+        </Card>
+        <Card className='hover:border-primary transition-all duration-300 hover:shadow-lg hover:-translate-y-1'>
+          <Link href="/dashboard/applications">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Applied Schemes
@@ -139,9 +139,9 @@ export default function Dashboard() {
               <div className="text-2xl font-bold">{applications.length}</div>
               <p className="text-xs text-muted-foreground">Click to view status</p>
             </CardContent>
-          </Card>
-        </Link>
-        <Card>
+          </Link>
+        </Card>
+        <Card className='transition-all duration-300 hover:shadow-lg hover:-translate-y-1'>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Approved Schemes
@@ -152,7 +152,7 @@ export default function Dashboard() {
               <div className="text-2xl font-bold">{approvedSchemesCount}</div>
               <p className="text-xs text-muted-foreground">Ready to avail benefits</p>
             </CardContent>
-          </Card>
+        </Card>
       </div>
 
       <section>

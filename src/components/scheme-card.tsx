@@ -30,7 +30,7 @@ const getCategoryIcon = (category: Scheme['category']) => {
 export function SchemeCard({ scheme }: { scheme: Scheme }) {
   const benefitAmount = getBenefitAmount(scheme.benefits);
   return (
-    <Card className="flex h-full flex-col justify-between">
+    <Card className="flex h-full flex-col justify-between transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
       <div>
         <CardHeader>
           <div className="flex justify-between items-start">
@@ -53,9 +53,9 @@ export function SchemeCard({ scheme }: { scheme: Scheme }) {
         </CardContent>
       </div>
       <CardFooter>
-        <Button variant="link" asChild className="w-full justify-end text-accent-foreground hover:text-accent-foreground/80 p-0">
+        <Button variant="link" asChild className="w-full justify-end text-primary p-0 group">
           <Link href={`/dashboard/all-schemes/${scheme.id}`}>
-            View Details <ArrowRight className="ml-2 h-4 w-4" />
+            View Details <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Link>
         </Button>
       </CardFooter>

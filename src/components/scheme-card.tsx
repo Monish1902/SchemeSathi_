@@ -20,6 +20,7 @@ const categoryIcons: { [key in Scheme['category']]: React.ReactNode } = {
   Health: <Heart className="h-4 w-4 mr-2" />,
   Housing: <House className="h-4 w-4 mr-2" />,
   General: <Handshake className="h-4 w-4 mr-2" />,
+  Employment: <Briefcase className="h-4 w-4 mr-2" />,
 };
 
 const getCategoryIcon = (category: Scheme['category']) => {

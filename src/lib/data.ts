@@ -204,7 +204,7 @@ export const schemes: Scheme[] = [
     id: 'ap-skill-development',
     name: 'AP Skill Development Schemes (APSSDC & PMKVY)',
     description: 'AP Skill Development operates 100+ centers offering free training in IT, healthcare, hospitality, manufacturing, and emerging technologies. The scheme partners with major corporations for internationally-recognized certifications and provides placement assistance, ensuring a high job placement rate. Training covers 24 sectors with 99+ job roles and includes entrepreneurship support.',
-    category: 'General',
+    category: 'Student',
     benefits: 'Free vocational training, industry-recognized certifications, and job placement assistance.',
     applyLink: 'https://naipunyam.ap.gov.in',
     eligibilityCriteria: [

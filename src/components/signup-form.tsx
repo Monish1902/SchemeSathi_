@@ -12,11 +12,13 @@ import {
 } from '@/components/ui/card';
 import { useAuth } from '@/firebase';
 import { initiateGoogleSignIn } from '@/firebase/non-blocking-login';
+import { useToast } from '@/hooks/use-toast';
 import { Chrome } from 'lucide-react';
 import Link from 'next/link';
 
 export function SignUpForm() {
   const auth = useAuth();
+  const { toast } = useToast(); // Import useToast to handle potential error messages
 
   const handleGoogleSignUp = () => {
     initiateGoogleSignIn(auth);

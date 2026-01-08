@@ -35,7 +35,8 @@ import { saveUserProfile, getUserProfile } from '@/lib/user-profile-service';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { andhraPradeshData, districts as apDistricts } from '@/lib/locations';
 
-
+// This schema now matches the fields from the OLD UserProfile to maintain form compatibility
+// The mapping to the NEW UserProfile happens in the saveUserProfile service
 export const formSchema = z.object({
   name: z.string().min(1, { message: 'Name is required.' }),
   age: z.coerce.number().min(1, { message: 'Age is required.' }),
@@ -106,7 +107,6 @@ export function EligibilityForm() {
             description: 'Your saved information has been loaded.',
           });
         } else if (user.displayName) {
-          // If no profile, but user has a display name, pre-fill it.
           form.setValue('name', user.displayName);
         }
       } catch (error) {
@@ -141,7 +141,7 @@ export function EligibilityForm() {
     }
     setLoading(true);
     try {
-      // 1. Save profile to Firestore
+      // The saveUserProfile service now handles mapping to the new structure
       await saveUserProfile(firestore, user.uid, values);
 
       toast({
@@ -149,10 +149,8 @@ export function EligibilityForm() {
         description: 'Your information has been saved to your account.',
       });
 
-      // 2. Fetch recommendations from AI, but handle failure gracefully
       try {
         const recommendations = await recommendSchemes(values);
-        // 3. Save recommendations to localStorage on success
         localStorage.setItem('schemeRecommendations', JSON.stringify(recommendations));
         toast({
           title: 'Recommendations Updated!',
@@ -160,16 +158,14 @@ export function EligibilityForm() {
         });
       } catch (aiError) {
         console.error('AI recommendation error:', aiError);
-        // Inform the user but don't block the flow
         toast({
           variant: 'destructive',
           title: 'AI Assistant Error',
-          description: "Could not fetch AI recommendations at this time. The AI service may be temporarily unavailable. Your profile was still saved successfully.",
+          description: "Could not fetch AI recommendations at this time. Your profile was still saved successfully.",
           duration: 9000,
         });
       }
       
-      // 4. Always redirect to the dashboard after attempting AI call
       router.push('/dashboard');
 
     } catch (error) {

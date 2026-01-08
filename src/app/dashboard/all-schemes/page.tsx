@@ -16,7 +16,7 @@ export default function AllSchemesPage() {
     }
     return schemes.filter(
       (scheme) =>
-        scheme.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        scheme.schemeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         scheme.description.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [searchQuery]);
@@ -45,7 +45,7 @@ export default function AllSchemesPage() {
       {filteredSchemes.length > 0 ? (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {filteredSchemes.map((scheme) => (
-            <SchemeCard key={scheme.id} scheme={scheme} />
+            <SchemeCard key={scheme.schemeId} scheme={scheme} />
           ))}
         </div>
       ) : (

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useMemo } from 'react';
@@ -19,11 +20,11 @@ import {
 } from '@/components/ui/table';
 import { useUser, useFirestore, useCollection } from '@/firebase';
 import { useMemoFirebase } from '@/firebase/provider';
-import { collection, query } from 'firebase/firestore';
+import { collection, query, where } from 'firebase/firestore';
 import { Loader2 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Terminal } from 'lucide-react';
-import type { Application } from '@/lib/types';
+import type { UserApplication } from '@/lib/types';
 
 
 export default function ApplicationsPage() {
@@ -32,10 +33,11 @@ export default function ApplicationsPage() {
 
   const applicationsQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
-    return query(collection(firestore, 'users', user.uid, 'applicationStatuses'));
+    // Query the new top-level collection and filter by the current user's ID
+    return query(collection(firestore, 'userApplications'), where('userId', '==', user.uid));
   }, [firestore, user]);
 
-  const { data: applications, isLoading, error } = useCollection<Application>(applicationsQuery);
+  const { data: applications, isLoading, error } = useCollection<UserApplication>(applicationsQuery);
 
   const sortedApplications = useMemo(() => {
     if (!applications) return [];
@@ -80,22 +82,22 @@ export default function ApplicationsPage() {
             </TableHeader>
             <TableBody>
               {sortedApplications.map((app) => (
-                <TableRow key={app.id}>
+                <TableRow key={app.applicationId}>
                   <TableCell className="font-medium">{app.schemeName}</TableCell>
-                  <TableCell className="text-muted-foreground">{app.id}</TableCell>
+                  <TableCell className="text-muted-foreground">{app.applicationId}</TableCell>
                   <TableCell>{new Date(app.applicationDate).toLocaleDateString()}</TableCell>
                   <TableCell className="text-right">
                     <Badge
                       variant={
-                        app.status === 'Approved'
+                        app.applicationStatus === 'Approved'
                           ? 'default'
-                          : app.status === 'Rejected'
+                          : app.applicationStatus === 'Rejected'
                           ? 'destructive'
                           : 'secondary'
                       }
-                      className={app.status === 'Approved' ? 'bg-green-500/20 text-green-700' : ''}
+                      className={app.applicationStatus === 'Approved' ? 'bg-green-500/20 text-green-700' : ''}
                     >
-                      {app.status}
+                      {app.applicationStatus}
                     </Badge>
                   </TableCell>
                 </TableRow>

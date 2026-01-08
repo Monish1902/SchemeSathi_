@@ -2,262 +2,215 @@
 {
   "entities": {
     "UserProfile": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "UserProfile",
       "type": "object",
-      "description": "Represents a user profile in the SchemeSathi application.",
+      "description": "Master user profile and account information.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the user profile."
-        },
-        "firebaseUid": {
-          "type": "string",
-          "description": "The unique user ID provided by Firebase Authentication."
-        },
-        "firstName": {
-          "type": "string",
-          "description": "The first name of the user."
-        },
-        "lastName": {
-          "type": "string",
-          "description": "The last name of the user."
-        },
-        "email": {
-          "type": "string",
-          "description": "The email address of the user.",
-          "format": "email"
-        },
-        "phone": {
-          "type": "string",
-          "description": "The phone number of the user."
-        },
-        "dateOfBirth": {
-          "type": "string",
-          "description": "The date of birth of the user.",
-          "format": "date-time"
-        },
-        "address": {
-          "type": "string",
-          "description": "The address of the user."
-        },
-        "eligibilityCriteria": {
-          "type": "array",
-          "description": "The user's specific answers to eligibility criteria questions.",
-          "items": {
-            "type": "string"
+        "uid": { "type": "string", "description": "Firebase UID - primary key" },
+        "firstName": { "type": "string" },
+        "lastName": { "type": "string" },
+        "fullName": { "type": "string", "description": "Concatenated for search" },
+        "email": { "type": "string", "format": "email" },
+        "phoneNumber": { "type": "string" },
+        "profilePhotoURL": { "type": "string", "format": "uri" },
+        "dateOfBirth": { "type": "string", "format": "date-time" },
+        "gender": { "type": "string", "enum": ["Male", "Female", "Other", "Prefer not to say"] },
+        "maritalStatus": { "type": "string", "enum": ["Single", "Married", "Widow/Widower", "Divorced"] },
+        "district": { "type": "string" },
+        "mandal": { "type": "string" },
+        "village": { "type": "string" },
+        "address": { "type": "string" },
+        "pinCode": { "type": "string" },
+        "state": { "type": "string" },
+        "isAPResident": { "type": "boolean" },
+        "aadhaarNumber": { "type": "string" },
+        "aadhaarVerified": { "type": "boolean" },
+        "ratioCardNumber": { "type": "string" },
+        "ratioCardType": { "type": "string" },
+        "casteCategory": { "type": "string", "enum": ["SC", "ST", "BC", "OBC", "General", "Minority"] },
+        "religionCategory": { "type": "string" },
+        "disabilityStatus": { "type": "string", "enum": ["None", "Physical", "Visual", "Hearing", "Intellectual", "Chronic"] },
+        "disabilityPercentage": { "type": "number" },
+        "disabilityId": { "type": "string" },
+        "accountCreatedAt": { "type": "string", "format": "date-time" },
+        "lastLoginAt": { "type": "string", "format": "date-time" },
+        "secondLastLoginAt": { "type": "string", "format": "date-time" },
+        "loginCount": { "type": "number" },
+        "lastProfileUpdateAt": { "type": "string", "format": "date-time" },
+        "accountStatus": { "type": "string", "enum": ["active", "inactive", "suspended", "deleted"] },
+        "annualFamilyIncome": { "type": "number" },
+        "incomeProofType": { "type": "string" },
+        "incomeVerified": { "type": "boolean" },
+        "bankAccountNumber": { "type": "string" },
+        "bankName": { "type": "string" },
+        "bankBranch": { "type": "string" },
+        "ifscCode": { "type": "string" },
+        "accountHolderName": { "type": "string" },
+        "aadharBankLinked": { "type": "boolean" },
+        "upiId": { "type": "string" },
+        "highestQualification": { "type": "string", "enum": ["Illiterate", "10th", "12th", "Diploma", "Bachelor", "Master", "PhD"] },
+        "isCurrentlyStudent": { "type": "boolean" },
+        "institutionName": { "type": "string" },
+        "institutionType": { "type": "string", "enum": ["Government", "Government-aided", "Private"] },
+        "courseEnrolled": { "type": "string" },
+        "courseStream": { "type": "string" },
+        "yearOfStudy": { "type": "number" },
+        "enrollmentNumber": { "type": "string" },
+        "studyCertificateURL": { "type": "string", "format": "uri" },
+        "employmentStatus": { "type": "string", "enum": ["Employed-Govt", "Employed-Private", "Self-employed", "Student", "Unemployed", "Farmer", "Business", "Daily-wage"] },
+        "employerName": { "type": "string" },
+        "employerType": { "type": "string" },
+        "occupationType": { "type": "string" },
+        "incomeFromEmployment": { "type": "number" },
+        "landHoldingWet": { "type": "number" },
+        "landHoldingDry": { "type": "number" },
+        "landHoldingTotal": { "type": "number" },
+        "surveyNumbers": { "type": "array", "items": { "type": "string" } },
+        "hasVehicle": { "type": "boolean" },
+        "vehicleType": { "type": "string", "enum": ["None", "2-wheeler", "4-wheeler", "Tractor", "Auto", "Taxi"] },
+        "vehicleRegistrationNumber": { "type": "string" },
+        "housingStatus": { "type": "string", "enum": ["Own", "Rented", "Govt-housing", "Family", "None"] },
+        "houseLandSqft": { "type": "number" },
+        "assets": {
+          "type": "object",
+          "properties": {
+            "tv": { "type": "boolean" },
+            "refrigerator": { "type": "boolean" },
+            "washingMachine": { "type": "boolean" },
+            "twoWheeler": { "type": "boolean" },
+            "fourWheeler": { "type": "boolean" },
+            "computerLaptop": { "type": "boolean" },
+            "waterPump": { "type": "boolean" }
           }
         },
-        "vehiclesOwned": {
-          "type": "boolean",
-          "description": "Whether the user or their family owns a four-wheeler vehicle."
+        "eligibilityAssessmentId": { "type": "string" },
+        "eligibilityLastUpdatedAt": { "type": "string", "format": "date-time" },
+        "qualifyingSchemes": { "type": "array", "items": { "type": "string" } },
+        "appliedSchemes": { "type": "array", "items": { "type": "string" } },
+        "approvedSchemes": { "type": "array", "items": { "type": "string" } },
+        "favoriteSchemes": { "type": "array", "items": { "type": "string" } },
+        "schemeInterestCategories": { "type": "array", "items": { "type": "string" } },
+        "emailNotificationsEnabled": { "type": "boolean" },
+        "smsNotificationsEnabled": { "type": "boolean" },
+        "whatsappNotificationsEnabled": { "type": "boolean" },
+        "notificationLanguage": { "type": "string" },
+        "schemeNotificationCategories": { "type": "array", "items": { "type": "string" } },
+        "doNotDisturbHours": {
+          "type": "object",
+          "properties": {
+            "startTime": { "type": "string" },
+            "endTime": { "type": "string" }
+          }
         },
-        "houseType": {
-          "type": "string",
-          "enum": [
-            "owned",
-            "rented",
-            "none"
-          ],
-          "description": "The user's housing situation."
-        },
-        "educationQualification": {
-          "type": "string",
-          "enum": [
-            "uneducated",
-            "1-10",
-            "inter",
-            "bachelors",
-            "masters"
-          ],
-          "description": "The user's highest level of education."
-        }
+        "appVersion": { "type": "string" },
+        "deviceType": { "type": "string" },
+        "lastAccessedDevice": { "type": "string" },
+        "referralCode": { "type": "string" },
+        "referredBy": { "type": "string" },
+        "dataConsent": { "type": "boolean" },
+        "tags": { "type": "array", "items": { "type": "string" } }
       },
-      "required": [
-        "id",
-        "firebaseUid",
-        "firstName",
-        "lastName",
-        "email",
-        "dateOfBirth"
-      ]
+      "required": ["uid", "email"]
     },
     "GovernmentScheme": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "GovernmentScheme",
       "type": "object",
-      "description": "Represents a government scheme available to users.",
+      "description": "Master list of all government schemes.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the government scheme."
-        },
-        "name": {
-          "type": "string",
-          "description": "The name of the government scheme."
-        },
-        "description": {
-          "type": "string",
-          "description": "A detailed description of the government scheme."
-        },
+        "schemeId": { "type": "string" },
+        "schemeName": { "type": "string" },
+        "shortName": { "type": "string" },
+        "description": { "type": "string" },
+        "fullDescription": { "type": "string" },
+        "category": { "type": "string" },
+        "subCategory": { "type": "string" },
+        "department": { "type": "string" },
+        "launchDate": { "type": "string", "format": "date-time" },
+        "lastUpdatedDate": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["Active", "Upcoming", "Closed", "On-Hold"] },
+        "applicationDeadline": { "type": "string", "format": "date-time" },
+        "schemeLogo": { "type": "string", "format": "uri" },
+        "benefitAmount": { "type": "number" },
+        "benefitCurrency": { "type": "string" },
+        "benefitFrequency": { "type": "string" },
+        "totalBenefitAmount": { "type": "number" },
+        "durationInMonths": { "type": "number" },
+        "nonFinancialBenefits": { "type": "array", "items": { "type": "string" } },
         "eligibilityCriteria": {
-          "type": "array",
-          "description": "The eligibility criteria for the scheme.",
-          "items": {
-            "type": "string"
+          "type": "object",
+          "properties": {
+             "ageRange": { "type": "object", "properties": { "minimumAge": { "type": "number" }, "maximumAge": { "type": "number" } } },
+             "incomeLimit": { "type": "number" },
+             "requiredEducation": { "type": "array", "items": { "type": "string" } },
+             "genderSpecific": { "type": "string" },
+             "socialCategoryRequired": { "type": "array", "items": { "type": "string" } },
+             "employmentStatus": { "type": "array", "items": { "type": "string" } }
           }
         },
-        "benefits": {
-          "type": "string",
-          "description": "The benefits offered by the scheme."
-        },
-        "applicationProcess": {
-          "type": "string",
-          "description": "Instructions on how to apply for the scheme."
-        },
-        "websiteUrl": {
-          "type": "string",
-          "description": "The URL of the scheme's official website.",
-          "format": "uri"
-        }
+        "applicationMode": { "type": "array", "items": { "type": "string" } },
+        "applicablePortal": { "type": "string", "format": "uri" },
+        "documentsRequired": { "type": "array", "items": { "type": "string" } },
+        "viewCount": { "type": "number" },
+        "applicationCount": { "type": "number" },
+        "averageRating": { "type": "number" },
+        "searchKeywords": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "lastUpdatedAt": { "type": "string", "format": "date-time" },
+        "isPromoted": { "type": "boolean" }
       },
-      "required": [
-        "id",
-        "name",
-        "description",
-        "eligibilityCriteria",
-        "benefits",
-        "applicationProcess",
-        "websiteUrl"
-      ]
+      "required": ["schemeId", "schemeName"]
     },
-    "UserSchemeRecommendation": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "UserSchemeRecommendation",
+    "EligibilityAssessment": {
+      "title": "EligibilityAssessment",
       "type": "object",
-      "description": "Represents a scheme recommendation for a specific user.",
+      "description": "Tracks user answers to eligibility questions.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the user scheme recommendation."
-        },
-        "userId": {
-          "type": "string",
-          "description": "Reference to UserProfile. (Relationship: UserProfile 1:N UserSchemeRecommendation)"
-        },
-        "schemeId": {
-          "type": "string",
-          "description": "Reference to GovernmentScheme. (Relationship: GovernmentScheme 1:N UserSchemeRecommendation)"
-        },
-        "recommendationDate": {
-          "type": "string",
-          "description": "The date the scheme was recommended to the user.",
-          "format": "date-time"
-        },
-        "matchScore": {
-          "type": "number",
-          "description": "The score representing how well the scheme matches the user's eligibility."
-        },
-        "reasoning": {
-          "type": "string",
-          "description": "The reasoning behind recommending this scheme to the user."
-        }
+        "assessmentId": { "type": "string" },
+        "userId": { "type": "string" },
+        "completedAt": { "type": "string", "format": "date-time" },
+        "age": { "type": "number" },
+        "gender": { "type": "string" },
+        "district": { "type": "string" },
+        "caste": { "type": "string" },
+        "annualFamilyIncome": { "type": "number" },
+        "landHoldingWet": { "type": "number" },
+        "landHoldingDry": { "type": "number" },
+        "housingStatus": { "type": "string" },
+        "highestEducation": { "type": "string" },
+        "employmentStatus": { "type": "string" },
+        "qualifyingSchemes": { "type": "array", "items": { "type": "object", "properties": { "schemeId": {"type": "string"}, "schemeName": {"type": "string"}, "matchPercentage": {"type": "number"} } } }
       },
-      "required": [
-        "id",
-        "userId",
-        "schemeId",
-        "recommendationDate",
-        "matchScore",
-        "reasoning"
-      ]
+      "required": ["assessmentId", "userId", "completedAt"]
     },
-    "ApplicationStatus": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "ApplicationStatus",
+    "UserApplication": {
+      "title": "UserApplication",
       "type": "object",
-      "description": "Represents the status of a user's application for a specific scheme.",
+      "description": "Track scheme applications submitted by users.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the application status."
-        },
-        "userId": {
-          "type": "string",
-          "description": "Reference to UserProfile. (Relationship: UserProfile 1:N ApplicationStatus)"
-        },
-        "schemeId": {
-          "type": "string",
-          "description": "Reference to GovernmentScheme. (Relationship: GovernmentScheme 1:N ApplicationStatus)"
-        },
-        "applicationDate": {
-          "type": "string",
-          "description": "The date the user applied for the scheme.",
-          "format": "date-time"
-        },
-        "status": {
-          "type": "string",
-          "description": "The current status of the application (e.g., 'Submitted', 'Under Review', 'Approved', 'Rejected')."
-        },
-        "lastUpdated": {
-          "type": "string",
-          "description": "The last time the application status was updated.",
-          "format": "date-time"
-        },
-        "notes": {
-          "type": "string",
-          "description": "Any notes or comments related to the application status."
-        }
+        "applicationId": { "type": "string" },
+        "userId": { "type": "string" },
+        "schemeId": { "type": "string" },
+        "schemeName": { "type": "string" },
+        "applicationDate": { "type": "string", "format": "date-time" },
+        "applicationStatus": { "type": "string", "enum": ["Draft", "Submitted", "Under-Review", "Approved", "Rejected", "Appealed", "Withdrawn", "Pending-Documents"] },
+        "lastStatusUpdateDate": { "type": "string", "format": "date-time" },
+        "statusUpdateHistory": { "type": "array", "items": { "type": "object", "properties": { "date": {"type": "string", "format": "date-time"}, "status": {"type": "string"}, "notes": {"type": "string"} } } }
       },
-      "required": [
-        "id",
-        "userId",
-        "schemeId",
-        "applicationDate",
-        "status",
-        "lastUpdated"
-      ]
+      "required": ["applicationId", "userId", "schemeId", "applicationDate", "applicationStatus"]
     },
-    "Notification": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Notification",
+    "SchemeUpdate": {
+      "title": "SchemeUpdate",
       "type": "object",
-      "description": "Represents a notification for a user.",
+      "description": "Track new and updated scheme information.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the notification."
-        },
-        "userId": {
-          "type": "string",
-          "description": "Reference to UserProfile. (Relationship: UserProfile 1:N Notification)"
-        },
-        "message": {
-          "type": "string",
-          "description": "The content of the notification."
-        },
-        "type": {
-          "type": "string",
-          "description": "The type of notification (e.g., 'Scheme Update', 'Application Status')."
-        },
-        "timestamp": {
-          "type": "string",
-          "description": "The date and time the notification was sent.",
-          "format": "date-time"
-        },
-        "isRead": {
-          "type": "boolean",
-          "description": "Indicates whether the notification has been read by the user."
-        }
+        "updateId": { "type": "string" },
+        "schemeId": { "type": "string" },
+        "updateTitle": { "type": "string" },
+        "updateType": { "type": "string" },
+        "updateDate": { "type": "string", "format": "date-time" },
+        "description": { "type": "string" }
       },
-      "required": [
-        "id",
-        "userId",
-        "message",
-        "type",
-        "timestamp",
-        "isRead"
-      ]
+      "required": ["updateId", "schemeId", "updateTitle", "updateDate"]
     }
   },
   "auth": {
@@ -267,100 +220,32 @@
     ]
   },
   "firestore": {
-    "structure": [
+    "collections": [
       {
-        "path": "/users/{userId}/userProfile",
-        "definition": {
-          "entityName": "UserProfile",
-          "schema": {
-            "$ref": "#/backend/entities/UserProfile"
-          },
-          "description": "Stores user profile information. Path-based ownership ensures only the authenticated user can access their profile.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The Firebase UID of the user."
-            }
-          ]
-        }
+        "path": "/users/{userId}",
+        "schema": { "$ref": "#/entities/UserProfile" },
+        "description": "Master user profile and account information"
       },
       {
-        "path": "/governmentSchemes/{schemeId}",
-        "definition": {
-          "entityName": "GovernmentScheme",
-          "schema": {
-            "$ref": "#/backend/entities/GovernmentScheme"
-          },
-          "description": "Stores information about government schemes. Accessible to all users.",
-          "params": [
-            {
-              "name": "schemeId",
-              "description": "The unique ID of the government scheme."
-            }
-          ]
-        }
+        "path": "/schemes/{schemeId}",
+        "schema": { "$ref": "#/entities/GovernmentScheme" },
+        "description": "Master list of all government schemes"
       },
       {
-        "path": "/users/{userId}/schemeRecommendations/{recommendationId}",
-        "definition": {
-          "entityName": "UserSchemeRecommendation",
-          "schema": {
-            "$ref": "#/backend/entities/UserSchemeRecommendation"
-          },
-          "description": "Stores scheme recommendations for a user. Path-based ownership ensures only the authenticated user can access their recommendations.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The Firebase UID of the user."
-            },
-            {
-              "name": "recommendationId",
-              "description": "The unique ID of the scheme recommendation."
-            }
-          ]
-        }
+        "path": "/eligibilityAssessments/{assessmentId}",
+        "schema": { "$ref": "#/entities/EligibilityAssessment" },
+        "description": "Track user answers to eligibility questions"
       },
       {
-        "path": "/users/{userId}/applicationStatuses/{applicationStatusId}",
-        "definition": {
-          "entityName": "ApplicationStatus",
-          "schema": {
-            "$ref": "#/backend/entities/ApplicationStatus"
-          },
-          "description": "Stores application statuses for a user's scheme applications. Path-based ownership ensures only the authenticated user can access their application statuses.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The Firebase UID of the user."
-            },
-            {
-              "name": "applicationStatusId",
-              "description": "The unique ID of the application status."
-            }
-          ]
-        }
+        "path": "/userApplications/{applicationId}",
+        "schema": { "$ref": "#/entities/UserApplication" },
+        "description": "Track scheme applications submitted by users"
       },
       {
-        "path": "/users/{userId}/notifications/{notificationId}",
-        "definition": {
-          "entityName": "Notification",
-          "schema": {
-            "$ref": "#/backend/entities/Notification"
-          },
-          "description": "Stores notifications for a user. Path-based ownership ensures only the authenticated user can access their notifications.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The Firebase UID of the user."
-            },
-            {
-              "name": "notificationId",
-              "description": "The unique ID of the notification."
-            }
-          ]
-        }
+        "path": "/schemeUpdates/{updateId}",
+        "schema": { "$ref": "#/entities/SchemeUpdate" },
+        "description": "Track new and updated scheme information"
       }
-    ],
-    "reasoning": "The Firestore structure is designed to ensure security, scalability, and debuggability, adhering to the principles of Authorization Independence, Clarity of Intent, DBAC, and QAPs. User data is stored under `/users/{userId}/userProfile` ensuring path-based ownership. Government schemes are stored in the `/governmentSchemes` collection. User-specific data, such as scheme recommendations, application statuses, and notifications, are stored within user-specific subcollections (e.g., `/users/{userId}/schemeRecommendations`). This design avoids hierarchical authorization dependencies, simplifies security rules, and enables secure list operations. Denormalization is not necessary in this design, given there is no collaborative data. QAPs is achieved by segregation. Each collection has uniform security rules. Authentication relies solely on `request.auth.uid`. Furthermore the structure is designed to efficiently model the relationships between users and the schemes they are recommended for or have applied to."
+    ]
   }
 }

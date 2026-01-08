@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -18,12 +19,6 @@ import type { FormSchemaType } from '@/components/eligibility-form';
  * `{ merge: true }` to create a new profile or update an existing one without
  * overwriting the entire document.
  *
- * Error handling is managed by chaining a `.catch()` block. If the write operation
- * fails due to security rules, it constructs a detailed `FirestorePermissionError`
- * containing the operation's context (path, data) and emits it globally.
- * This allows a centralized listener to catch and display the error without
- * crashing the component.
- *
  * @param db The Firestore instance.
  * @param userId The UID of the user whose profile is being saved.
  * @param profileData The profile data to save, matching `FormSchemaType`.
@@ -33,15 +28,20 @@ export function saveUserProfile(
   userId: string,
   profileData: FormSchemaType
 ) {
-  // The document now lives at /users/{userId}/profile/main
-  // This is to align with the backend.json structure and rules for subcollections
-  const profileRef = doc(db, 'users', userId, 'userProfile', 'main');
+  const profileRef = doc(db, 'users', userId);
   
   const dataToSave = {
     ...profileData,
-    landHolding: profileData.landHolding ?? null, // Ensure landHolding is not undefined
-    firebaseUid: userId, // Add firebaseUid to satisfy security rules
-    updatedAt: serverTimestamp(),
+    uid: userId,
+    lastProfileUpdateAt: serverTimestamp(),
+    // Ensure fields match the new schema, converting where necessary
+    casteCategory: profileData.category,
+    housingStatus: profileData.houseType,
+    highestQualification: profileData.educationQualification,
+    employmentStatus: profileData.occupation,
+    hasVehicle: profileData.vehiclesOwned,
+    // Add account creation timestamp only if it's a new document
+    accountCreatedAt: serverTimestamp(),
   };
 
   // Use setDoc with merge to create or update.
@@ -74,12 +74,29 @@ export async function getUserProfile(
   db: Firestore,
   userId: string
 ): Promise<FormSchemaType | null> {
-  const profileRef = doc(db, 'users', userId, 'userProfile', 'main');
+  const profileRef = doc(db, 'users', userId);
   const docSnap = await getDoc(profileRef);
 
   if (docSnap.exists()) {
-    // Return the document data, conforming to FormSchemaType.
-    return docSnap.data() as FormSchemaType;
+    const data = docSnap.data();
+    // Map new fields back to old form schema fields for compatibility
+    return {
+      name: data.fullName || `${data.firstName} ${data.lastName}`,
+      age: data.age,
+      gender: data.gender,
+      annualIncome: data.annualFamilyIncome,
+      familySize: data.familySize,
+      location: data.location,
+      district: data.district,
+      mandal: data.mandal,
+      category: data.casteCategory,
+      disability: data.disabilityStatus !== 'None',
+      occupation: data.employmentStatus,
+      landHolding: `${data.landHoldingTotal} acres` || '',
+      vehiclesOwned: data.hasVehicle,
+      houseType: data.housingStatus,
+      educationQualification: data.highestQualification,
+    } as FormSchemaType;
   } else {
     // The user does not have a profile saved yet.
     return null;

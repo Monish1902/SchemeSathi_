@@ -1,166 +1,40 @@
-/**
- * # Firestore Security Rules
- *
- * ## Core Philosophy
- * This ruleset enforces a strict user-ownership model. All user-specific data, including profiles, recommendations, application statuses, and notifications, is nested within a user's private document tree. Access is granted only to the authenticated owner of that data. Publicly accessible data, like government schemes, is stored in a separate top-level collection and is read-only for all clients to prevent unauthorized modifications.
- *
- * ## Data Structure
- * - `/users/{userId}`: Each document represents a user's private space.
- * - `/users/{userId}/{subcollection}`: All personal user data (profile, recommendations, applications, notifications) is organized into subcollections under the user's primary document.
- * - `/governmentSchemes/{schemeId}`: A top-level collection for public government scheme information.
- *
- * ## Key Security Decisions
- * - **No User Enumeration**: Listing documents in the top-level `/users` collection is explicitly disallowed to protect user privacy.
- * - **Owner-Only Access**: A user can only read or write data within their own path (e.g., `/users/{their_uid}/...`).
- * - **Read-Only Public Data**: The `/governmentSchemes` collection is publicly readable by anyone, but all client-side write operations (`create`, `update`, `delete`) are disabled. This data must be managed through a trusted server-side process (e.g., Admin SDK).
- * - **Default Secure**: Any path not explicitly matched is inaccessible.
- *
- * ## Denormalization for Authorization
- * Each document within a user's private subcollections (e.g., `ApplicationStatus`, `Notification`) contains a `userId` field. The rules enforce on `create` that this field matches the authenticated user's ID in the path, establishing an unbreakable ownership link. On `update`, this `userId` field is enforced as immutable.
- *
- * ## Structural Segregation
- * The ruleset leverages structural segregation for security and performance. Private user data is kept entirely separate from public `governmentSchemes` data. This avoids complex rules with conditional checks and ensures that queries for public data do not risk exposing private information.
- */
+
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // ------------------------------------------------------------------------
-    // Helper Functions
-    // ------------------------------------------------------------------------
-
-    /**
-     * Checks if the user is authenticated.
-     */
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    /**
-     * Checks if the currently signed-in user's UID matches the provided userId.
-     * This is the core of the ownership model.
-     */
-    function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
+    
+    // Users can only read/write their own data
+    match /users/{userId} {
+      allow read: if request.auth.uid == userId;
+      allow write: if request.auth.uid == userId;
+      allow update: if request.auth.uid == userId && 
+                       (request.resource.data.accountCreatedAt == resource.data.accountCreatedAt); // Prevent modification of creation time
     }
     
-    /**
-     * Validates that the `firebaseUid` field in a new UserProfile document
-     * matches the document's ID, ensuring relational integrity.
-     */
-    function hasValidProfileDataOnCreate(userId) {
-      return request.resource.data.firebaseUid == userId;
+    // Schemes are readable by all authenticated users
+    match /schemes/{schemeId} {
+      allow read: if request.auth.uid != null;
+      allow write: if false; // Disallow client-side writes
     }
-
-    /**
-     * Enforces immutability for the UserProfile's core `firebaseUid` field during updates.
-     */
-    function hasImmutableProfileDataOnUpdate() {
-      return request.resource.data.firebaseUid == resource.data.firebaseUid;
+    
+    // Eligibility assessments belong to specific users
+    match /eligibilityAssessments/{assessmentId} {
+      allow read: if request.auth.uid == resource.data.userId;
+      allow create: if request.auth.uid == request.resource.data.userId;
+      allow update: if request.auth.uid == resource.data.userId;
     }
-
-    /**
-     * Validates that the `userId` field in a new document within a user's
-     * subcollection matches the `userId` from the path.
-     */
-    function hasValidUserIdOnCreate(userId) {
-      return request.resource.data.userId == userId;
+    
+    // User applications
+    match /userApplications/{applicationId} {
+      allow read: if request.auth.uid == resource.data.userId;
+      allow create: if request.auth.uid == request.resource.data.userId;
+      allow update: if request.auth.uid == resource.data.userId;
     }
-
-    /**
-     * Enforces that the `userId` field in a document within a user's
-     * subcollection cannot be changed after creation.
-     */
-    function hasImmutableUserIdOnUpdate() {
-      return request.resource.data.userId == resource.data.userId;
-    }
-
-    // ------------------------------------------------------------------------
-    // Collection: users
-    // ------------------------------------------------------------------------
-
-    /**
-     * @description Controls access to user data. The user's document itself is just a container.
-     * @path /users/{userId}
-     * @deny (list) A user cannot list all documents in the `/users` collection to prevent user enumeration.
-     * @principle Restricts access to a user's own data tree and prevents discovery of other users.
-     */
-    match /users/{userId} {
-      allow read, write: if false; // Disallow direct reads/writes to the container doc.
-      allow list: if false;
-      
-      // ----------------------------------------------------------------------
-      // Subcollection: userProfile
-      // ----------------------------------------------------------------------
-      /**
-       * @description Secures a user's private profile document.
-       * @path /users/{userId}/userProfile/{profileId}
-       * @allow A user can create, read, update, and delete their own profile document.
-       * @principle Enforces document ownership within a user's private subcollection.
-       */
-       match /userProfile/{profileId} {
-         allow read, delete: if isOwner(userId);
-         allow create: if isOwner(userId) && hasValidProfileDataOnCreate(userId);
-         allow update: if isOwner(userId) && hasImmutableProfileDataOnUpdate();
-       }
-
-      // ----------------------------------------------------------------------
-      // Subcollection: schemeRecommendations
-      // ----------------------------------------------------------------------
-
-      /**
-       * @description Secures a user's private scheme recommendations.
-       * @path /users/{userId}/schemeRecommendations/{recommendationId}
-       * @allow A user can manage their own recommendation documents.
-       * @principle Enforces document ownership within a user's private subcollection.
-       */
-      match /schemeRecommendations/{recommendationId} {
-        allow read, write: if isOwner(userId);
-      }
-
-      // ----------------------------------------------------------------------
-      // Subcollection: applicationStatuses
-      // ----------------------------------------------------------------------
-
-      /**
-       * @description Secures a user's private application status trackers.
-       * @path /users/{userId}/applicationStatuses/{applicationStatusId}
-       * @allow A user can manage their own application status documents.
-       * @principle Enforces document ownership within a user's private subcollection.
-       */
-      match /applicationStatuses/{applicationStatusId} {
-        allow read, write: if isOwner(userId);
-      }
-
-      // ----------------------------------------------------------------------
-      // Subcollection: notifications
-      // ----------------------------------------------------------------------
-
-      /**
-       * @description Secures a user's private notifications.
-       * @path /users/{userId}/notifications/{notificationId}
-       * @allow A user can manage their own notification documents.
-       * @principle Enforces document ownership within a user's private subcollection.
-       */
-      match /notifications/{notificationId} {
-        allow read, write: if isOwner(userId);
-      }
-    }
-
-    // ------------------------------------------------------------------------
-    // Collection: governmentSchemes
-    // ------------------------------------------------------------------------
-
-    /**
-     * @description Controls access to the public collection of government schemes.
-     * @path /governmentSchemes/{schemeId}
-     * @allow (get, list) Any client, authenticated or not, can read scheme information.
-     * @deny (create, update, delete) All client-side writes are forbidden to protect data integrity.
-     * @principle Provides public read access while centralizing data management to a secure backend.
-     */
-    match /governmentSchemes/{schemeId} {
-      allow read: if true;
-      allow write: if false;
+    
+    // Scheme updates are readable by all authenticated users
+    match /schemeUpdates/{updateId} {
+      allow read: if request.auth.uid != null;
+      allow write: if false; // Disallow client-side writes
     }
   }
 }

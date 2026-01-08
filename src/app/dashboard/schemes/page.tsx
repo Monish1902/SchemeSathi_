@@ -18,9 +18,9 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { getUserProfile } from '@/lib/user-profile-service';
 import type { FormSchemaType } from '@/components/eligibility-form';
-import type { Application } from '@/lib/types';
+import type { UserApplication } from '@/lib/types';
 import { useMemoFirebase } from '@/firebase/provider';
-import { collection, query } from 'firebase/firestore';
+import { collection, query, where } from 'firebase/firestore';
 
 
 export default function MySchemesPage() {
@@ -31,10 +31,10 @@ export default function MySchemesPage() {
 
   const applicationsQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
-    return query(collection(firestore, 'users', user.uid, 'applicationStatuses'));
+    return query(collection(firestore, 'userApplications'), where('userId', '==', user.uid));
   }, [firestore, user]);
 
-  const { data: applications, isLoading: isLoadingApplications } = useCollection<Application>(applicationsQuery);
+  const { data: applications, isLoading: isLoadingApplications } = useCollection<UserApplication>(applicationsQuery);
 
   useEffect(() => {
     try {
@@ -60,101 +60,18 @@ export default function MySchemesPage() {
       return [];
     }
 
-    // 1. Get scheme names from AI recommendations
     const aiRecommendedSchemeNames = recommendations
       ? recommendations.map(rec => rec.schemeName)
       : [];
     
-    // 2. Rule-based eligibility check
-    const ruleBasedSchemes = schemes.filter(scheme => {
-        // Always include universal health scheme
-        if (scheme.id === 'dr-ntr-vaidya-seva') {
-            return true;
-        }
-
-        // Aadabidda Nidhi Scheme
-        if (scheme.id === 'aadabidda-nidhi') {
-            if (profile.gender === 'female' && profile.age >= 18 && profile.age <= 59) {
-                return true;
-            }
-        }
-        
-        // Annadata Sukhibhava Scheme
-        if (scheme.id === 'annadata-sukhibhava') {
-             if (profile.occupation === 'farmer' && profile.landHolding && !profile.landHolding.startsWith('>')) {
-                return true;
-            }
-        }
-
-        // YSR Vahana Mitra
-        if (scheme.id === 'ysr-vahana-mitra') {
-            if (profile.occupation === 'driver') {
-                return true;
-            }
-        }
-
-        // Thalliki Vandanam Scheme
-        if (scheme.id === 'thalliki-vandanam') {
-             if (profile.occupation === 'housewife' || (profile.gender === 'female' && profile.familySize > 1)) {
-                 return true;
-             }
-        }
-
-        // INDIRAMMA Housing Scheme
-        if (scheme.id === 'indiramma-housing') {
-            if (profile.houseType === 'rented' || profile.houseType === 'none') {
-                return true;
-            }
-        }
-
-        // AP Skill Development
-        if (scheme.id === 'ap-skill-development') {
-            if (profile.occupation === 'unemployed' || profile.occupation === 'student' && profile.age >= 18 && profile.age <= 35) {
-                return true;
-            }
-        }
-        
-        // YSR Cheyutha
-        if (scheme.id === 'ysr-cheyutha') {
-            if (profile.gender === 'female' && profile.age >= 45 && profile.age <= 60 && ['SC', 'ST', 'BC', 'Minority'].includes(profile.category)) {
-                return true;
-            }
-        }
-
-        // Rythu Bharosa
-        if (scheme.id === 'rythu-bharosa') {
-            if (profile.occupation === 'farmer') {
-                return true;
-            }
-        }
-
-        // YSR Kapu Nestham
-        if (scheme.id === 'ysr-kapu-nestham') {
-             if (profile.gender === 'female' && profile.age >= 45 && profile.age <= 60 && profile.category === 'General') { // Assuming Kapu falls under general for this logic
-                return true;
-            }
-        }
-
-        // NTR Bharosa Pension Scheme
-        if (scheme.id === 'ntr-bharosa-pension') {
-            if (profile.age >= 60) {
-                return true;
-            }
-        }
-
-        return false;
-    }).map(s => s.name);
-
-
-    // 3. Combine and deduplicate scheme names
+    // This logic is now simplified as the full eligibility engine would be backend-driven
+    // For now, we will rely on AI recommendations stored in localStorage
     const allRecommendedSchemeNames = Array.from(new Set([
-      ...ruleBasedSchemes, 
       ...aiRecommendedSchemeNames,
     ]));
 
-    // 4. Filter the main schemes list to get the final scheme objects
     return schemes.filter(scheme =>
-      allRecommendedSchemeNames.includes(scheme.name)
+      allRecommendedSchemeNames.includes(scheme.schemeName)
     );
   }, [profile, recommendations]);
 
@@ -200,7 +117,7 @@ export default function MySchemesPage() {
         {recommendedSchemes.length > 0 ? (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {recommendedSchemes.map((scheme) => (
-                <SchemeCard key={scheme.id} scheme={scheme} />
+                <SchemeCard key={scheme.schemeId} scheme={scheme} />
             ))}
             </div>
         ) : (

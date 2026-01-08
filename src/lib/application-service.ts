@@ -1,8 +1,9 @@
+
 'use client';
 
 import {
-  doc,
-  setDoc,
+  collection,
+  addDoc,
   Firestore,
   serverTimestamp,
 } from 'firebase/firestore';
@@ -10,11 +11,7 @@ import { errorEmitter }from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 
 /**
- * Creates or updates a user's application status in Firestore.
- *
- * This function saves the record that a user has applied for a scheme.
- * It uses the scheme ID as the document ID to prevent duplicate entries
- * for the same scheme.
+ * Creates a user's application status in the new userApplications collection.
  *
  * @param db The Firestore instance.
  * @param userId The UID of the user.
@@ -27,27 +24,27 @@ export function saveApplicationStatus(
   schemeId: string,
   schemeName: string,
 ) {
-  // Use the schemeId as the document ID to prevent duplicates.
-  const applicationRef = doc(db, 'users', userId, 'applicationStatuses', schemeId);
+  // Use the new top-level collection
+  const applicationRef = collection(db, 'userApplications');
   
   const dataToSave = {
     userId: userId,
     schemeId: schemeId,
     schemeName: schemeName,
     applicationDate: new Date().toISOString(),
-    status: 'Submitted',
-    lastUpdated: serverTimestamp(),
+    applicationStatus: 'Submitted',
+    lastStatusUpdateDate: serverTimestamp(),
   };
 
-  // Use setDoc to create or overwrite the application status.
-  return setDoc(
+  // Use addDoc to create a new application document with a unique ID.
+  return addDoc(
     applicationRef,
     dataToSave
   ).catch(error => {
     // If the operation fails, create a detailed, contextual error.
     const permissionError = new FirestorePermissionError({
-      path: applicationRef.path,
-      operation: 'write',
+      path: applicationRef.path, // Path to the collection
+      operation: 'create',
       requestResourceData: dataToSave,
     });
     

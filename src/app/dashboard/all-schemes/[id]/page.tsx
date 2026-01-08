@@ -22,17 +22,10 @@ import { Label }from '@/components/ui/label';
 import { Loader2 } from 'lucide-react';
 import { formatIndianCurrency } from '@/lib/utils';
 
-const getBenefitAmount = (benefits: string): number | null => {
-    const match = benefits.match(/₹?([0-9,]+)/);
-    if (!match) return null;
-    const amount = parseInt(match[1].replace(/,/g, ''), 10);
-    return isNaN(amount) ? null : amount;
-}
-
 export default function SchemeDetailPage() {
   const params = useParams();
   const id = params.id as string;
-  const scheme = schemes.find((s) => s.id === id);
+  const scheme = schemes.find((s) => s.schemeId === id);
   const { user } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
@@ -43,7 +36,7 @@ export default function SchemeDetailPage() {
     notFound();
   }
 
-  const benefitAmount = getBenefitAmount(scheme.benefits);
+  const benefitAmount = scheme.benefitAmount;
 
   const handleSaveStatus = async () => {
     if (!user || !firestore) {
@@ -66,10 +59,10 @@ export default function SchemeDetailPage() {
 
     setIsSaving(true);
     try {
-        await saveApplicationStatus(firestore, user.uid, scheme.id, scheme.name);
+        await saveApplicationStatus(firestore, user.uid, scheme.schemeId, scheme.schemeName);
         toast({
             title: 'Status Saved!',
-            description: `Your application for ${scheme.name} has been marked as 'Submitted'.`,
+            description: `Your application for ${scheme.schemeName} has been marked as 'Submitted'.`,
         });
     } catch (error) {
         console.error('Error saving application status:', error);
@@ -97,9 +90,9 @@ export default function SchemeDetailPage() {
         <CardHeader>
           <div className="flex flex-col md:flex-row justify-between items-start gap-4">
             <div>
-              <CardTitle className="text-3xl mb-2">{scheme.name}</CardTitle>
+              <CardTitle className="text-3xl mb-2">{scheme.schemeName}</CardTitle>
               <CardDescription>{scheme.description}</CardDescription>
-               {benefitAmount !== null && (
+               {benefitAmount > 0 && (
                 <div className="mt-4">
                     <p className="text-sm font-semibold text-card-foreground">Key Benefit</p>
                     <p className="text-3xl font-bold text-primary">{formatIndianCurrency(benefitAmount)}</p>
@@ -107,7 +100,7 @@ export default function SchemeDetailPage() {
                )}
             </div>
             <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 shrink-0 mt-4 md:mt-0">
-              <a href={scheme.applyLink} target="_blank" rel="noopener noreferrer">
+              <a href={scheme.applicablePortal} target="_blank" rel="noopener noreferrer">
                 Know More <Globe className="ml-2 h-4 w-4" />
               </a>
             </Button>
@@ -117,9 +110,11 @@ export default function SchemeDetailPage() {
           <section>
             <h2 className="text-xl font-semibold tracking-tight mb-4 flex items-center"><Check className="mr-2 h-5 w-5 text-primary" />Eligibility Criteria</h2>
             <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-              {scheme.eligibilityCriteria.map((criterion, index) => (
-                <li key={index}>{criterion}</li>
-              ))}
+              <li>Age: {scheme.eligibilityCriteria.ageRange.minimumAge} - {scheme.eligibilityCriteria.ageRange.maximumAge} years</li>
+              <li>Income Limit: Below {formatIndianCurrency(scheme.eligibilityCriteria.incomeLimit)} annually</li>
+              {scheme.eligibilityCriteria.socialCategoryRequired.length > 0 && (
+                <li>Category: {scheme.eligibilityCriteria.socialCategoryRequired.join(', ')}</li>
+              )}
             </ul>
           </section>
           <section>
@@ -129,10 +124,6 @@ export default function SchemeDetailPage() {
                 <li key={index}>{doc}</li>
               ))}
             </ul>
-          </section>
-          <section>
-            <h2 className="text-xl font-semibold tracking-tight mb-4 flex items-center"><Send className="mr-2 h-5 w-5 text-primary" />How to Apply</h2>
-            <p className="text-muted-foreground whitespace-pre-line">{scheme.applicationProcess}</p>
           </section>
         </CardContent>
       </Card>

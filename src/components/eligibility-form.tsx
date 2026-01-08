@@ -33,6 +33,8 @@ import { useRouter } from 'next/navigation';
 import { useUser, useFirestore } from '@/firebase';
 import { saveUserProfile, getUserProfile } from '@/lib/user-profile-service';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
+import { andhraPradeshData, districts as apDistricts } from '@/lib/locations';
+
 
 export const formSchema = z.object({
   name: z.string().min(1, { message: 'Name is required.' }),
@@ -78,6 +80,8 @@ export function EligibilityForm() {
       vehiclesOwned: false,
     },
   });
+
+  const selectedDistrict = form.watch('district');
 
   const loadProfile = useCallback(async () => {
     if (user && firestore) {
@@ -271,9 +275,26 @@ export function EligibilityForm() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>District</FormLabel>
-                          <FormControl>
-                            <Input placeholder="e.g., Guntur" {...field} />
-                          </FormControl>
+                          <Select
+                            onValueChange={(value) => {
+                              field.onChange(value);
+                              form.setValue('mandal', ''); // Reset mandal when district changes
+                            }}
+                            value={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select your district" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {apDistricts.map((district) => (
+                                <SelectItem key={district} value={district}>
+                                  {district}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -284,9 +305,23 @@ export function EligibilityForm() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Mandal</FormLabel>
-                          <FormControl>
-                            <Input placeholder="e.g., Tadikonda" {...field} />
-                          </FormControl>
+                          <Select onValueChange={field.onChange} value={field.value} disabled={!selectedDistrict}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select your mandal" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {selectedDistrict && andhraPradeshData[selectedDistrict as keyof typeof andhraPradeshData]?.map((mandal) => (
+                                <SelectItem key={mandal} value={mandal}>
+                                  {mandal}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                           <FormDescription>
+                            Select a district first.
+                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}

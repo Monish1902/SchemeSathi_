@@ -109,6 +109,7 @@ export default function Dashboard() {
         <h1 className="text-3xl font-bold tracking-tight">
           Welcome, {user?.displayName?.split(' ')[0] || 'User'}!
         </h1>
+        <p className="text-muted-foreground">Here is a quick overview of your profile and schemes.</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -122,7 +123,7 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{recommendedSchemes.length}</div>
-              <p className="text-xs text-muted-foreground">Based on your profile</p>
+              <p className="text-xs text-muted-foreground">Based on your profile. Click to view.</p>
             </CardContent>
           </Link>
         </Card>
@@ -145,40 +146,27 @@ export default function Dashboard() {
       <section>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-semibold tracking-tight">
-            Recommended for You
+            Find New Schemes
           </h2>
-          <Button variant="outline" asChild>
-            <Link href="/dashboard/profile">
-                Update Profile <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
         </div>
-        {recommendedSchemes.length > 0 ? (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {recommendedSchemes.map((scheme) => (
-                <SchemeCard key={scheme.id} scheme={scheme} />
-            ))}
-            </div>
-        ) : (
-            <Card className="flex flex-col items-center justify-center text-center p-12">
-                <CardHeader>
-                    <div className="mx-auto bg-secondary p-3 rounded-full">
-                        <Lightbulb className="h-8 w-8 text-muted-foreground" />
-                    </div>
-                  <CardTitle>No Recommendations Yet</CardTitle>
-                  <CardDescription>
-                    Complete your profile to get personalized scheme recommendations.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90">
-                        <Link href="/dashboard/profile">
-                            Go to My Profile
-                        </Link>
-                    </Button>
-                </CardContent>
-            </Card>
-        )}
+        <Card className="flex flex-col items-center justify-center text-center p-12">
+            <CardHeader>
+                <div className="mx-auto bg-secondary p-3 rounded-full">
+                    <Lightbulb className="h-8 w-8 text-muted-foreground" />
+                </div>
+              <CardTitle>Update Your Profile</CardTitle>
+              <CardDescription>
+                Complete or update your profile to get the most accurate scheme recommendations from our AI.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90">
+                    <Link href="/dashboard/profile">
+                        Go to My Profile <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                </Button>
+            </CardContent>
+        </Card>
       </section>
     </div>
   );

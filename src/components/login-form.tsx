@@ -62,9 +62,9 @@ export function LoginForm() {
       await signInWithEmailAndPassword(auth, values.email, values.password);
       // onAuthStateChanged in layout will handle redirect
     } catch (error: any) {
-      console.error('Login error:', error);
       let description = 'An unexpected error occurred. Please try again.';
-      if (error.code === AuthErrorCodes.USER_DELETED || error.code === AuthErrorCodes.INVALID_credential) {
+      // Catch specific Firebase auth errors for better user feedback.
+      if (error.code === AuthErrorCodes.USER_DELETED || error.code === AuthErrorCodes.INVALID_CREDENTIAL) {
          description = 'Invalid email or password. Please check your credentials and try again.';
       }
       toast({

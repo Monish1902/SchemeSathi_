@@ -39,6 +39,7 @@ export function saveUserProfile(
   
   const dataToSave = {
     ...profileData,
+    landHolding: profileData.landHolding ?? null, // Ensure landHolding is not undefined
     firebaseUid: userId, // Add firebaseUid to satisfy security rules
     updatedAt: serverTimestamp(),
   };

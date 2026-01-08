@@ -68,9 +68,9 @@ export function EligibilityForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      age: undefined,
-      annualIncome: undefined,
-      familySize: undefined,
+      age: '' as any,
+      annualIncome: '' as any,
+      familySize: '' as any,
       district: '',
       mandal: '',
       landHolding: '',
@@ -509,7 +509,7 @@ export function EligibilityForm() {
                               <FormControl>
                                   <SelectTrigger>
                                   <SelectValue placeholder="Select your education level" />
-                                  </SelectTrigger>
+                                  </Trigge_r>
                               </FormControl>
                               <SelectContent>
                                   <SelectItem value="uneducated">Uneducated</SelectItem>
@@ -546,6 +546,8 @@ export function EligibilityForm() {
 }
 
     
+    
+
     
 
     

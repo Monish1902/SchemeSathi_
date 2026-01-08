@@ -521,7 +521,7 @@ export function EligibilityForm() {
                                   <SelectItem value="student">Student</SelectItem>
                                   <SelectItem value="employed">Employed</SelectItem>
                                   <SelectItem value="unemployed">Unemployed</SelectItem>
-                                  <SelectItem value="farmer">Farmer/Tenant</SelectItem>
+                                  <SelectItem value="farmer">Farmer</SelectItem>
                                   <SelectItem value="driver">Driver</SelectItem>
                                   <SelectItem value="weaver">Weaver</SelectItem>
                                   <SelectItem value="daily worker">Daily Worker</SelectItem>
@@ -579,10 +579,3 @@ export function EligibilityForm() {
     </Card>
   );
 }
-
-    
-    
-
-    
-
-    

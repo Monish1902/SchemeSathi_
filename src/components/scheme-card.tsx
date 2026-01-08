@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Scheme } from '@/lib/types';
-import { ArrowRight, Briefcase, GraduationCap, Heart, House, Leaf, PiggyBank, User, Handshake, Tractor, PersonStanding } from 'lucide-react';
+import { ArrowRight, Briefcase, GraduationCap, Heart, House, Leaf, PiggyBank, User, Handshake, Tractor, PersonStanding, Fish } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from './ui/badge';
 
@@ -21,6 +21,7 @@ const categoryIcons: { [key in Scheme['category']]: React.ReactNode } = {
   Housing: <House className="h-4 w-4 mr-2" />,
   General: <Handshake className="h-4 w-4 mr-2" />,
   Employment: <Briefcase className="h-4 w-4 mr-2" />,
+  Fisherman: <Fish className="h-4 w-4 mr-2" />,
 };
 
 const getCategoryIcon = (category: Scheme['category']) => {

@@ -389,7 +389,7 @@ export const schemes: Scheme[] = [
     id: 'ysr-matsyakara-bharosa',
     name: 'YSR Matsyakara Bharosa',
     description: 'This scheme provides financial support to fishermen during the annual marine fishing ban period. It also includes an enhanced ex-gratia for fishermen who die while fishing and provides a subsidy on diesel.',
-    category: 'Employment',
+    category: 'Fisherman',
     benefits: '₹10,000 financial assistance during the fishing ban period. ₹10 lakh ex-gratia to the families of deceased fishermen. Subsidy of ₹9 per litre on diesel.',
     applyLink: 'https://apfisheries.gov.in/',
     eligibilityCriteria: [

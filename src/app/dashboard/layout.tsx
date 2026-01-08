@@ -61,16 +61,13 @@ export default function DashboardLayout({
               key={item.href}
               href={item.href}
               className={cn(
-                'relative transition-colors hover:text-foreground',
+                'px-3 py-1.5 rounded-md transition-all duration-300',
                 pathname === item.href
-                  ? 'text-foreground font-semibold'
-                  : 'text-muted-foreground'
+                  ? 'bg-primary text-primary-foreground font-semibold shadow-sm'
+                  : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
               )}
             >
               {item.label}
-               {pathname === item.href && (
-                <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-primary rounded-full" />
-              )}
             </Link>
           ))}
         </nav>
@@ -86,10 +83,10 @@ export default function DashboardLayout({
             </Button>
           </SheetTrigger>
           <SheetContent side="left">
-            <nav className="grid gap-6 text-lg font-medium">
+            <nav className="grid gap-4 text-lg font-medium">
               <Link
                 href="#"
-                className="flex items-center gap-2 text-lg font-semibold"
+                className="flex items-center gap-2 text-lg font-semibold mb-4"
               >
                 <Logo />
               </Link>
@@ -98,10 +95,10 @@ export default function DashboardLayout({
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    'transition-colors hover:text-foreground',
+                    'px-3 py-2 rounded-md transition-all duration-300',
                     pathname === item.href
-                      ? 'text-foreground font-semibold'
-                      : 'text-muted-foreground'
+                      ? 'bg-primary text-primary-foreground font-semibold shadow-sm'
+                      : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
                   )}
                 >
                   {item.label}

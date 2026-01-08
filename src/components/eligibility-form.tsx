@@ -190,7 +190,7 @@ export function EligibilityForm() {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <Accordion type="multiple" defaultValue={['personal-info']} className="w-full">
+            <Accordion type="multiple" defaultValue={['personal-info', 'financial-info', 'educational-info']} className="w-full">
               {/* Personal Information Section */}
               <AccordionItem value="personal-info">
                 <AccordionTrigger className="text-lg font-semibold">Personal Information</AccordionTrigger>

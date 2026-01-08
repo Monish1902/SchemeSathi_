@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Check, FileText, Globe } from 'lucide-react';
+import { ArrowLeft, Check, FileText, Globe, Info } from 'lucide-react';
 import Link from 'next/link';
 import { formatIndianCurrency } from '@/lib/utils';
 import type { Scheme } from '@/lib/types';
@@ -66,7 +66,7 @@ export default function SchemeDetailPage() {
             </div>
             <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 shrink-0 mt-4 md:mt-0">
               <a href={scheme.applicablePortal} target="_blank" rel="noopener noreferrer">
-                Know More <Globe className="ml-2 h-4 w-4" />
+                I'm interested <Globe className="ml-2 h-4 w-4" />
               </a>
             </Button>
           </div>
@@ -90,6 +90,10 @@ export default function SchemeDetailPage() {
                 <li key={index}>{doc}</li>
               ))}
             </ul>
+          </section>
+          <section>
+            <h2 className="text-xl font-semibold tracking-tight mb-4 flex items-center"><Info className="mr-2 h-5 w-5 text-primary" />Application Process</h2>
+            <p className="text-muted-foreground">{scheme.applicationProcess}</p>
           </section>
         </CardContent>
       </Card>

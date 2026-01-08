@@ -68,20 +68,14 @@ export function EligibilityForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      age: 30,
-      gender: 'male',
-      annualIncome: 50000,
-      familySize: 4,
-      location: 'Urban',
+      age: undefined,
+      annualIncome: undefined,
+      familySize: undefined,
       district: '',
       mandal: '',
-      category: 'General',
+      landHolding: '',
       disability: false,
-      occupation: 'student',
-      landHolding: '0',
       vehiclesOwned: false,
-      houseType: 'rented',
-      educationQualification: 'bachelors',
     },
   });
 
@@ -202,7 +196,7 @@ export function EligibilityForm() {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <Accordion type="multiple" defaultValue={['personal-info', 'financial-info', 'educational-info']} className="w-full">
+            <Accordion type="multiple" className="w-full">
               {/* Personal Information Section */}
               <AccordionItem value="personal-info">
                 <AccordionTrigger className="text-lg font-semibold">Personal Information</AccordionTrigger>
@@ -550,3 +544,5 @@ export function EligibilityForm() {
     </Card>
   );
 }
+
+    

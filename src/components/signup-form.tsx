@@ -59,12 +59,28 @@ export function SignUpForm() {
         description: 'Welcome to SchemeSathi. Redirecting you to the dashboard...',
       });
     } catch (error: any) {
-      console.error(error);
-      toast({
-        variant: 'destructive',
-        title: 'Sign Up Failed',
-        description: error.message || 'An unknown error occurred.',
-      });
+      if (error.code === 'auth/email-already-in-use') {
+        toast({
+            variant: 'destructive',
+            title: 'Email Already Registered',
+            description: (
+            <>
+                An account with this email already exists.{' '}
+                <Link href="/login" className="underline font-bold">
+                Please log in instead.
+                </Link>
+            </>
+            ),
+            duration: 9000,
+        });
+      } else {
+        console.error(error);
+        toast({
+            variant: 'destructive',
+            title: 'Sign Up Failed',
+            description: error.message || 'An unknown error occurred.',
+        });
+      }
     } finally {
       setLoading(false);
     }

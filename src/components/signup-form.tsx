@@ -15,10 +15,16 @@ import { initiateGoogleSignIn } from '@/firebase/non-blocking-login';
 import { useToast } from '@/hooks/use-toast';
 import { Chrome } from 'lucide-react';
 import Link from 'next/link';
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  AuthErrorCodes,
+} from 'firebase/auth';
+
 
 export function SignUpForm() {
   const auth = useAuth();
-  const { toast } = useToast(); // Import useToast to handle potential error messages
+  const { toast } = useToast();
 
   const handleGoogleSignUp = () => {
     initiateGoogleSignIn(auth);

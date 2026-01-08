@@ -10,16 +10,12 @@ import {
 import Link from 'next/link';
 import { schemes, applications } from '@/lib/data';
 import {
-  ArrowRight,
   FileText,
   GanttChart,
-  Lightbulb,
 } from 'lucide-react';
-import { SchemeCard } from '@/components/scheme-card';
 import { useUser, useFirestore } from '@/firebase';
 import { useEffect, useState } from 'react';
 import { RecommendSchemesOutput } from '@/ai/flows/recommend-schemes-based-on-eligibility';
-import { Button } from '@/components/ui/button';
 import { getUserProfile } from '@/lib/user-profile-service';
 import type { FormSchemaType } from '@/components/eligibility-form';
 
@@ -98,11 +94,6 @@ export default function Dashboard() {
     allRecommendedSchemeNames.includes(scheme.name)
   );
 
-
-  const approvedSchemesCount = applications.filter(
-    (app) => app.status === 'Approved'
-  ).length;
-
   return (
     <div className="space-y-8">
       <div>
@@ -142,32 +133,6 @@ export default function Dashboard() {
           </Link>
         </Card>
       </div>
-
-      <section>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-semibold tracking-tight">
-            Find New Schemes
-          </h2>
-        </div>
-        <Card className="flex flex-col items-center justify-center text-center p-12">
-            <CardHeader>
-                <div className="mx-auto bg-secondary p-3 rounded-full">
-                    <Lightbulb className="h-8 w-8 text-muted-foreground" />
-                </div>
-              <CardTitle>Update Your Profile</CardTitle>
-              <CardDescription>
-                Complete or update your profile to get the most accurate scheme recommendations from our AI.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-                <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90">
-                    <Link href="/dashboard/profile">
-                        Go to My Profile <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                </Button>
-            </CardContent>
-        </Card>
-      </section>
     </div>
   );
 }

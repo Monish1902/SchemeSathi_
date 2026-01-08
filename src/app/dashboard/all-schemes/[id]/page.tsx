@@ -11,70 +11,35 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Check, FileText, Globe, Send } from 'lucide-react';
+import { ArrowLeft, Check, FileText, Globe } from 'lucide-react';
 import Link from 'next/link';
-import { useUser, useFirestore } from '@/firebase';
-import { saveApplicationStatus } from '@/lib/application-service';
-import { useToast } from '@/hooks/use-toast';
-import { useState } from 'react';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label }from '@/components/ui/label';
-import { Loader2 } from 'lucide-react';
 import { formatIndianCurrency } from '@/lib/utils';
+import type { Scheme } from '@/lib/types';
+
+// Helper function to render a list item if the value exists
+const renderListItem = (label: string, value: string | string[] | number | undefined | null) => {
+  if (!value || (Array.isArray(value) && value.length === 0)) {
+    return null;
+  }
+  const displayValue = Array.isArray(value) ? value.join(', ') : value;
+  return <li><strong>{label}:</strong> {displayValue}</li>;
+};
 
 export default function SchemeDetailPage() {
   const params = useParams();
   const id = params.id as string;
   const scheme = schemes.find((s) => s.schemeId === id);
-  const { user } = useUser();
-  const firestore = useFirestore();
-  const { toast } = useToast();
-  const [hasApplied, setHasApplied] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
 
   if (!scheme) {
     notFound();
   }
 
-  const benefitAmount = scheme.benefitAmount;
+  const {
+    eligibilityCriteria: criteria,
+    documentsRequired,
+    benefitAmount
+  } = scheme as Scheme;
 
-  const handleSaveStatus = async () => {
-    if (!user || !firestore) {
-      toast({
-        variant: 'destructive',
-        title: 'Not signed in',
-        description: 'You must be signed in to save your application status.',
-      });
-      return;
-    }
-
-    if (!hasApplied) {
-        toast({
-            variant: 'destructive',
-            title: 'Confirmation needed',
-            description: 'Please check the box to confirm you have applied.',
-        });
-        return;
-    }
-
-    setIsSaving(true);
-    try {
-        await saveApplicationStatus(firestore, user.uid, scheme.schemeId, scheme.schemeName);
-        toast({
-            title: 'Status Saved!',
-            description: `Your application for ${scheme.schemeName} has been marked as 'Submitted'.`,
-        });
-    } catch (error) {
-        console.error('Error saving application status:', error);
-        toast({
-            variant: 'destructive',
-            title: 'Uh oh! Something went wrong.',
-            description: 'There was a problem saving your application status.',
-        });
-    } finally {
-        setIsSaving(false);
-    }
-  }
 
   return (
     <div className="space-y-6">
@@ -110,51 +75,24 @@ export default function SchemeDetailPage() {
           <section>
             <h2 className="text-xl font-semibold tracking-tight mb-4 flex items-center"><Check className="mr-2 h-5 w-5 text-primary" />Eligibility Criteria</h2>
             <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-              <li>Age: {scheme.eligibilityCriteria.ageRange.minimumAge} - {scheme.eligibilityCriteria.ageRange.maximumAge} years</li>
-              <li>Income Limit: Below {formatIndianCurrency(scheme.eligibilityCriteria.incomeLimit)} annually</li>
-              {scheme.eligibilityCriteria.socialCategoryRequired.length > 0 && (
-                <li>Category: {scheme.eligibilityCriteria.socialCategoryRequired.join(', ')}</li>
-              )}
+              {renderListItem('Age Range', `${criteria.ageRange.minimumAge} - ${criteria.ageRange.maximumAge} years`)}
+              {renderListItem('Annual Income Limit', `Below ${formatIndianCurrency(criteria.incomeLimit)}`)}
+              {renderListItem('Required Social Category', criteria.socialCategoryRequired)}
+              {renderListItem('Gender', criteria.genderSpecific)}
+              {renderListItem('Required Employment Status', criteria.employmentStatus)}
+              {renderListItem('Housing Status', criteria.housingStatus)}
             </ul>
           </section>
           <section>
             <h2 className="text-xl font-semibold tracking-tight mb-4 flex items-center"><FileText className="mr-2 h-5 w-5 text-primary" />Documents Required</h2>
             <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-              {scheme.documentsRequired.map((doc, index) => (
+              {documentsRequired.map((doc, index) => (
                 <li key={index}>{doc}</li>
               ))}
             </ul>
           </section>
         </CardContent>
       </Card>
-      
-      <Card>
-        <CardHeader>
-            <CardTitle>Track Your Application</CardTitle>
-            <CardDescription>
-                After you have completed the application on the scheme's official website, confirm it here to track its status.
-            </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-            <div className="flex items-center space-x-2">
-                <Checkbox id="terms" checked={hasApplied} onCheckedChange={(checked) => setHasApplied(!!checked)} />
-                <Label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                    I confirm that I have successfully submitted my application for this scheme.
-                </Label>
-            </div>
-             <Button onClick={handleSaveStatus} disabled={isSaving || !hasApplied}>
-              {isSaving ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                'Save Application Status'
-              )}
-            </Button>
-        </CardContent>
-      </Card>
-
     </div>
   );
 }

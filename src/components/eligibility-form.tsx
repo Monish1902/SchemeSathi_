@@ -32,6 +32,7 @@ import { recommendSchemes } from '@/ai/flows/recommend-schemes-based-on-eligibil
 import { useRouter } from 'next/navigation';
 import { useUser, useFirestore } from '@/firebase';
 import { saveUserProfile, getUserProfile } from '@/lib/user-profile-service';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 
 export const formSchema = z.object({
   name: z.string().min(1, { message: 'Name is required.' }),
@@ -142,7 +143,7 @@ export function EligibilityForm() {
         toast({
           variant: 'destructive',
           title: 'AI Assistant Error',
-          description: 'Could not fetch AI recommendations at this time. This may be a temporary issue. Your profile was saved.',
+          description: "Could not fetch AI recommendations at this time. This may be a temporary issue with the service. Your profile was still saved successfully.",
           duration: 9000,
         });
       }
@@ -188,187 +189,213 @@ export function EligibilityForm() {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Name</FormLabel>
-                        <FormControl>
-                        <Input placeholder="Your full name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                    )}
-                />
-              <FormField
-                control={form.control}
-                name="age"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Age</FormLabel>
-                    <FormControl>
-                      <Input type="number" placeholder="Your age" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="annualIncome"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Annual Income (₹)</FormLabel>
-                    <FormControl>
-                      <Input type="number" placeholder="e.g., 100000" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="familySize"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Family Size</FormLabel>
-                    <FormControl>
-                      <Input type="number" placeholder="Number of family members" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="occupation"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Occupation</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                            <SelectTrigger>
-                            <SelectValue placeholder="Select your occupation" />
-                            </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                            <SelectItem value="student">Student</SelectItem>
-                            <SelectItem value="employed">Employed</SelectItem>
-                            <SelectItem value="unemployed">Unemployed</SelectItem>
-                            <SelectItem value="farmer">Farmer</SelectItem>
-                            <SelectItem value="driver">Driver</SelectItem>
-                            <SelectItem value="weaver">Weaver</SelectItem>
-                            <SelectItem value="daily worker">Daily Worker</SelectItem>
-                            <SelectItem value="other">Other</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="location"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Location</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select your location type" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="Urban">Urban</SelectItem>
-                        <SelectItem value="Rural">Rural</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Social Category</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select your category" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="General">General</SelectItem>
-                        <SelectItem value="OBC">OBC</SelectItem>
-                        <SelectItem value="SC">SC</SelectItem>
-                        <SelectItem value="ST">ST</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="gender"
-                render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <FormLabel>Gender</FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        className="flex flex-row space-x-4"
-                      >
-                        <FormItem className="flex items-center space-x-2 space-y-0">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <Accordion type="multiple" defaultValue={['personal-info']} className="w-full">
+              {/* Personal Information Section */}
+              <AccordionItem value="personal-info">
+                <AccordionTrigger className="text-lg font-semibold">Personal Information</AccordionTrigger>
+                <AccordionContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name</FormLabel>
                           <FormControl>
-                            <RadioGroupItem value="male" />
+                            <Input placeholder="Your full name" {...field} />
                           </FormControl>
-                          <FormLabel className="font-normal">Male</FormLabel>
+                          <FormMessage />
                         </FormItem>
-                        <FormItem className="flex items-center space-x-2 space-y-0">
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="age"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Age</FormLabel>
                           <FormControl>
-                            <RadioGroupItem value="female" />
+                            <Input type="number" placeholder="Your age" {...field} />
                           </FormControl>
-                          <FormLabel className="font-normal">Female</FormLabel>
+                          <FormMessage />
                         </FormItem>
-                        <FormItem className="flex items-center space-x-2 space-y-0">
+                      )}
+                    />
+                     <FormField
+                      control={form.control}
+                      name="familySize"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Family Size</FormLabel>
                           <FormControl>
-                            <RadioGroupItem value="other" />
+                            <Input type="number" placeholder="Number of family members" {...field} />
                           </FormControl>
-                          <FormLabel className="font-normal">Other</FormLabel>
+                          <FormMessage />
                         </FormItem>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="disability"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 col-span-1 md:col-span-2">
-                    <div className="space-y-0.5">
-                      <FormLabel className="text-base">Disability</FormLabel>
-                      <FormDescription>
-                        Do you have any physical disabilities?
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="location"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Location</FormLabel>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select your location type" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="Urban">Urban</SelectItem>
+                              <SelectItem value="Rural">Rural</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                     <FormField
+                      control={form.control}
+                      name="category"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Social Category</FormLabel>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select your category" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="General">General</SelectItem>
+                              <SelectItem value="OBC">OBC</SelectItem>
+                              <SelectItem value="SC">SC</SelectItem>
+                              <SelectItem value="ST">ST</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="gender"
+                      render={({ field }) => (
+                        <FormItem className="space-y-3">
+                          <FormLabel>Gender</FormLabel>
+                          <FormControl>
+                            <RadioGroup
+                              onValueChange={field.onChange}
+                              value={field.value}
+                              className="flex flex-row space-x-4"
+                            >
+                              <FormItem className="flex items-center space-x-2 space-y-0">
+                                <FormControl>
+                                  <RadioGroupItem value="male" />
+                                </FormControl>
+                                <FormLabel className="font-normal">Male</FormLabel>
+                              </FormItem>
+                              <FormItem className="flex items-center space-x-2 space-y-0">
+                                <FormControl>
+                                  <RadioGroupItem value="female" />
+                                </FormControl>
+                                <FormLabel className="font-normal">Female</FormLabel>
+                              </FormItem>
+                              <FormItem className="flex items-center space-x-2 space-y-0">
+                                <FormControl>
+                                  <RadioGroupItem value="other" />
+                                </FormControl>
+                                <FormLabel className="font-normal">Other</FormLabel>
+                              </FormItem>
+                            </RadioGroup>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="disability"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 col-span-1 md:col-span-2">
+                          <div className="space-y-0.5">
+                            <FormLabel className="text-base">Disability</FormLabel>
+                            <FormDescription>
+                              Do you have any physical disabilities?
+                            </FormDescription>
+                          </div>
+                          <FormControl>
+                            <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
 
-            <Button type="submit" disabled={loading || !user} className="w-full md:w-auto bg-accent text-accent-foreground hover:bg-accent/90">
+              {/* Financial Information Section */}
+              <AccordionItem value="financial-info">
+                <AccordionTrigger className="text-lg font-semibold">Financial Information</AccordionTrigger>
+                <AccordionContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+                    <FormField
+                      control={form.control}
+                      name="annualIncome"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Annual Income (₹)</FormLabel>
+                          <FormControl>
+                            <Input type="number" placeholder="e.g., 100000" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+              
+              {/* Educational & Professional Section */}
+              <AccordionItem value="educational-info">
+                <AccordionTrigger className="text-lg font-semibold">Professional & Educational Information</AccordionTrigger>
+                <AccordionContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+                    <FormField
+                      control={form.control}
+                      name="occupation"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Occupation</FormLabel>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                              <FormControl>
+                                  <SelectTrigger>
+                                  <SelectValue placeholder="Select your occupation" />
+                                  </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                  <SelectItem value="student">Student</SelectItem>
+                                  <SelectItem value="employed">Employed</SelectItem>
+                                  <SelectItem value="unemployed">Unemployed</SelectItem>
+                                  <SelectItem value="farmer">Farmer</SelectItem>
+                                  <SelectItem value="driver">Driver</SelectItem>
+                                  <SelectItem value="weaver">Weaver</SelectItem>
+                                  <SelectItem value="daily worker">Daily Worker</SelectItem>
+                                  <SelectItem value="other">Other</SelectItem>
+                              </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+
+            <Button type="submit" disabled={loading || !user} className="w-full md:w-auto bg-accent text-accent-foreground hover:bg-accent/90 mt-8">
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

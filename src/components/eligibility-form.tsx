@@ -70,9 +70,9 @@ export function EligibilityForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      age: '' as any,
-      annualIncome: '' as any,
-      familySize: '' as any,
+      age: 0,
+      annualIncome: 0,
+      familySize: 1,
       district: '',
       mandal: '',
       landHolding: '',
@@ -426,7 +426,7 @@ export function EligibilityForm() {
                             <Input type="number" placeholder="e.g., 100000" {...field} />
                           </FormControl>
                           <FormDescription>
-                            e.g., &lt;₹10k for rural, &lt;₹12k for urban, &lt;₹2.5L etc.
+                            e.g., &lt; ₹1.2 Lakh, &lt; ₹2.5 Lakh.
                           </FormDescription>
                           <FormMessage />
                         </FormItem>

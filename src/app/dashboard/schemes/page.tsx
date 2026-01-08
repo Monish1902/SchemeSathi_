@@ -63,11 +63,32 @@ export default function MySchemesPage() {
     const aiRecommendedSchemeNames = recommendations
       ? recommendations.map(rec => rec.schemeName)
       : [];
+
+    let occupationBasedSchemes: string[] = [];
+    if (profile.occupation) {
+      switch (profile.occupation) {
+        case 'farmer':
+          occupationBasedSchemes.push('Annadata Sukhibhava Scheme', 'Rythu Bharosa Scheme');
+          break;
+        case 'student':
+          occupationBasedSchemes.push('Dokka Seethamma Midday Meal Scheme (PM POSHAN)', 'AP Skill Development Schemes (APSSDC & PMKVY)', 'Thalliki Vandanam Scheme');
+          break;
+        case 'driver':
+            occupationBasedSchemes.push('YSR Vahana Mitra Scheme (Auto Driver Sevalo)');
+            break;
+        case 'unemployed':
+            occupationBasedSchemes.push('AP Skill Development Schemes (APSSDC & PMKVY)');
+            break;
+        default:
+          break;
+      }
+    }
     
     // This logic is now simplified as the full eligibility engine would be backend-driven
     // For now, we will rely on AI recommendations stored in localStorage
     const allRecommendedSchemeNames = Array.from(new Set([
       ...aiRecommendedSchemeNames,
+      ...occupationBasedSchemes,
     ]));
 
     return schemes.filter(scheme =>
@@ -90,20 +111,6 @@ export default function MySchemesPage() {
             <CardContent>
               <div className="text-2xl font-bold">{recommendedSchemes.length}</div>
               <p className="text-xs text-muted-foreground">Based on your profile. Click to view.</p>
-            </CardContent>
-          </Link>
-        </Card>
-        <Card className='hover:border-primary transition-all duration-300 hover:shadow-lg hover:-translate-y-1'>
-          <Link href="/dashboard/applications">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Applied Schemes
-              </CardTitle>
-              <GanttChart className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{isLoadingApplications ? '...' : (applications?.length ?? 0)}</div>
-              <p className="text-xs text-muted-foreground">Click to view status</p>
             </CardContent>
           </Link>
         </Card>

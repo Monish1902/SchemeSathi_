@@ -309,6 +309,32 @@ export const schemes: Scheme[] = [
         "Passport-size Photograph"
     ],
     applicationProcess: `Farmers can apply through the local Village/Ward Secretariat (Sachivalayam) or online through the official portal. Verification is conducted by village revenue officers.`
+  },
+  {
+    id: 'ysr-kapu-nestham',
+    name: 'YSR Kapu Nestham',
+    description: 'YSR Kapu Nestham provides financial assistance to women of the Kapu, Balija, Telaga, and Ontari communities for livelihood and self-employment opportunities. The scheme aims to empower these women economically and promote entrepreneurship.',
+    category: 'Women',
+    benefits: '₹15,000 per annum, totaling ₹75,000 over five years.',
+    applyLink: 'https://gsws-nbm.ap.gov.in/NBM/',
+    eligibilityCriteria: [
+        "Women aged between 45 and 60 years.",
+        "Must belong to Kapu, Balija, Telaga, or Ontari communities.",
+        "Total family income should be less than ₹10,000 per month in rural areas and ₹12,000 per month in urban areas.",
+        "Total land holding of the family should be less than 3 acres of wetland or 10 acres of dry land.",
+        "No family member should be a government employee or pensioner.",
+        "The family should not own a four-wheeler (taxis, tractors, and autos are exempted).",
+        "No family member should be an income tax payee."
+    ],
+    documentsRequired: [
+        "Aadhaar Card",
+        "Caste certificate",
+        "Income certificate",
+        "Residential proof",
+        "Bank account details",
+        "Passport-size photograph"
+    ],
+    applicationProcess: `Applications can be submitted through the local Village/Ward Secretariat (Sachivalayam). The status can be tracked on the Navasakam Beneficiary Management (NBM) portal.`
   }
 ];
 

@@ -207,7 +207,7 @@ export function EligibilityForm() {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <Accordion type="multiple" defaultValue={['personal-info', 'financial-info', 'educational-info']} className="w-full">
+            <Accordion type="multiple" defaultValue={['personal-info', 'educational-info']} className="w-full">
               {/* Personal Information Section */}
               <AccordionItem value="personal-info">
                 <AccordionTrigger className="text-lg font-semibold">Personal Information</AccordionTrigger>
@@ -418,107 +418,6 @@ export function EligibilityForm() {
                 </AccordionContent>
               </AccordionItem>
 
-              {/* Financial Information Section */}
-              <AccordionItem value="financial-info">
-                <AccordionTrigger className="text-lg font-semibold">Financial Information</AccordionTrigger>
-                <AccordionContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
-                    <FormField
-                      control={form.control}
-                      name="annualIncome"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Annual Family Income (₹)</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="text"
-                              placeholder="e.g., 1,00,000"
-                              {...field}
-                              onChange={(e) => {
-                                const rawValue = e.target.value.replace(/,/g, '');
-                                if (/^\d*$/.test(rawValue)) {
-                                  const numValue = Number(rawValue);
-                                  field.onChange(numValue); // Update form state with number
-                                }
-                              }}
-                              value={field.value > 0 ? formatIndianNumber(field.value) : ''}
-                            />
-                          </FormControl>
-                          <FormDescription>
-                            e.g., &lt; ₹1,20,000 (1.2 Lakh), &lt; ₹2,50,000 (2.5 Lakh).
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                     <FormField
-                        control={form.control}
-                        name="landHolding"
-                        render={({ field }) => (
-                            <FormItem>
-                            <FormLabel>Land Holding (in Acres)</FormLabel>
-                            <Select onValueChange={field.onChange} value={field.value}>
-                                <FormControl>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select your land holding size" />
-                                </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                    <SelectItem value="0">No land</SelectItem>
-                                    <SelectItem value="0-3 wet">0-3 acres (Wet)</SelectItem>
-                                    <SelectItem value="0-10 dry">0-10 acres (Dry)</SelectItem>
-                                    <SelectItem value="0-25 mixed">0-25 acres (Mixed)</SelectItem>
-                                    <SelectItem value=">25">More than 25 acres</SelectItem>
-                                </SelectContent>
-                            </Select>
-                             <FormDescription>e.g., 0-3 acres wet, 0-10 acres dry.</FormDescription>
-                            <FormMessage />
-                            </FormItem>
-                        )}
-                        />
-                     <FormField
-                      control={form.control}
-                      name="houseType"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>House Ownership</FormLabel>
-                           <Select onValueChange={field.onChange} value={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select your house ownership status" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                                <SelectItem value="owned">Owned</SelectItem>
-                                <SelectItem value="rented">Rented</SelectItem>
-                                <SelectItem value="none">No House</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="vehiclesOwned"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                          <div className="space-y-0.5">
-                            <FormLabel className="text-base">Own a 4-Wheeler</FormLabel>
-                            <FormDescription>
-                              Do you or your family own a four-wheeler vehicle?
-                            </FormDescription>
-                          </div>
-                          <FormControl>
-                            <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-              
               {/* Educational & Professional Section */}
               <AccordionItem value="educational-info">
                 <AccordionTrigger className="text-lg font-semibold">Professional & Educational Information</AccordionTrigger>

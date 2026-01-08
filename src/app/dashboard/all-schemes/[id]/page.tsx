@@ -7,6 +7,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -64,11 +65,6 @@ export default function SchemeDetailPage() {
                 </div>
                )}
             </div>
-            <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 shrink-0 mt-4 md:mt-0">
-              <a href={scheme.applicablePortal} target="_blank" rel="noopener noreferrer">
-                I'm interested <Globe className="ml-2 h-4 w-4" />
-              </a>
-            </Button>
           </div>
         </CardHeader>
         <CardContent className="space-y-8">
@@ -96,6 +92,13 @@ export default function SchemeDetailPage() {
             <p className="text-muted-foreground">{scheme.applicationProcess}</p>
           </section>
         </CardContent>
+         <CardFooter className="justify-center">
+            <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 shrink-0 mt-4 md:mt-0">
+              <a href={scheme.applicablePortal} target="_blank" rel="noopener noreferrer">
+                I'm interested <Globe className="ml-2 h-4 w-4" />
+              </a>
+            </Button>
+        </CardFooter>
       </Card>
     </div>
   );

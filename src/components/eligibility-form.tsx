@@ -509,7 +509,7 @@ export function EligibilityForm() {
                               <FormControl>
                                   <SelectTrigger>
                                   <SelectValue placeholder="Select your education level" />
-                                  </Trigge_r>
+                                  </SelectTrigger>
                               </FormControl>
                               <SelectContent>
                                   <SelectItem value="uneducated">Uneducated</SelectItem>

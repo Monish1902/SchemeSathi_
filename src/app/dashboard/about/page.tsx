@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -77,7 +78,7 @@ export default function AboutPage() {
       </div>
 
        <div className="text-center">
-            <Button size="lg" asChild className="bg-accent text-accent-foreground hover:bg-accent/90 animate-bounce">
+            <Button size="lg" asChild className="bg-accent text-accent-foreground hover:bg-accent/90">
                 <Link href="/dashboard/schemes">
                     Find My Schemes Now
                     <ArrowRight className="ml-2 h-5 w-5" />

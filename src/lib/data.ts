@@ -204,7 +204,7 @@ export const schemes: Scheme[] = [
     id: 'ap-skill-development',
     name: 'AP Skill Development Schemes (APSSDC & PMKVY)',
     description: 'AP Skill Development operates 100+ centers offering free training in IT, healthcare, hospitality, manufacturing, and emerging technologies. The scheme partners with major corporations for internationally-recognized certifications and provides placement assistance, ensuring a high job placement rate. Training covers 24 sectors with 99+ job roles and includes entrepreneurship support.',
-    category: 'Student',
+    category: 'Employment',
     benefits: 'Free vocational training, industry-recognized certifications, and job placement assistance.',
     applyLink: 'https://naipunyam.ap.gov.in',
     eligibilityCriteria: [
@@ -335,6 +335,78 @@ export const schemes: Scheme[] = [
         "Passport-size photograph"
     ],
     applicationProcess: `Applications can be submitted through the local Village/Ward Secretariat (Sachivalayam). The status can be tracked on the Navasakam Beneficiary Management (NBM) portal.`
+  },
+  {
+    id: 'ysr-pension-kanuka',
+    name: 'YSR Pension Kanuka',
+    description: 'A comprehensive social security pension scheme providing monthly financial aid to various vulnerable sections of society. This scheme consolidates and enhances previous pension programs to ensure timely and transparent disbursement directly to beneficiaries.',
+    category: 'General',
+    benefits: 'Monthly pension varying by category (e.g., ₹3,000 for elderly, widows; higher for disabled).',
+    applyLink: 'https://sspensions.ap.gov.in/default.aspx',
+    eligibilityCriteria: [
+        'Must be a resident of Andhra Pradesh.',
+        'Must belong to a BPL family.',
+        'Age criteria varies: 60+ for Old Age, 18+ for Widows, no age limit for Disabled.',
+        'Specific criteria for weavers, toddy tappers, and single women.',
+        'Family must not have a government employee or pensioner.',
+        'Family should not own a 4-wheeler vehicle (exemptions apply).',
+    ],
+    documentsRequired: [
+        'Aadhaar Card.',
+        'White Ration Card.',
+        'Bank Account Passbook.',
+        'Proof of Age.',
+        'Death certificate of husband for widow pension.',
+        'SADAREM certificate for disability pension.',
+    ],
+    applicationProcess: 'Applications are submitted at the Village/Ward Secretariat. Volunteers conduct physical verification, and approval is done at the Mandal level. Status can be tracked online.'
+  },
+  {
+    id: 'jagananna-vidya-deevena',
+    name: 'Jagananna Vidya Deevena',
+    description: 'A full fee reimbursement scheme for students pursuing post-matric courses such as ITI, Polytechnic, Degree, and above. The scheme aims to make higher education accessible to all students from economically weaker backgrounds by covering their college and hostel fees.',
+    category: 'Student',
+    benefits: 'Full reimbursement of college tuition and hostel fees, paid directly to the mothers\' accounts quarterly.',
+    applyLink: 'https://jnanabhumi.ap.gov.in/',
+    eligibilityCriteria: [
+        'Students from SC, ST, BC, EBC, Kapu, Minority, and Disabled categories.',
+        'Family annual income must be less than ₹2.5 lakh.',
+        'Family should not own more than 10 acres of wet land or 25 acres of dry land.',
+        'No family member should be a government employee or income tax payee.',
+        'Student must maintain a minimum of 75% attendance.',
+    ],
+    documentsRequired: [
+        'Aadhaar Card of student and parents.',
+        'Caste and Income certificates.',
+        'College admission details.',
+        'Bank account details of the mother.',
+        'Ration card.',
+        'SSC/Intermediate marks memo.',
+    ],
+    applicationProcess: 'Students apply through the Jnanabhumi portal. College principals verify the applications, which are then processed for disbursement.'
+  },
+   {
+    id: 'ysr-matsyakara-bharosa',
+    name: 'YSR Matsyakara Bharosa',
+    description: 'This scheme provides financial support to fishermen during the annual marine fishing ban period. It also includes an enhanced ex-gratia for fishermen who die while fishing and provides a subsidy on diesel.',
+    category: 'Employment',
+    benefits: '₹10,000 financial assistance during the fishing ban period. ₹10 lakh ex-gratia to the families of deceased fishermen. Subsidy of ₹9 per litre on diesel.',
+    applyLink: 'https://apfisheries.gov.in/',
+    eligibilityCriteria: [
+        'Must be a registered fisherman and a member of a cooperative society.',
+        'Must own a mechanized or motorized fishing boat.',
+        'Should be a permanent resident of a coastal village in Andhra Pradesh.',
+        'Must possess a valid biometric card issued by the Fisheries Department.',
+    ],
+    documentsRequired: [
+        'Aadhaar Card.',
+        'Fisherman Biometric ID Card.',
+        'Boat Registration Certificate.',
+        'Bank Account Details.',
+        'Ration Card.',
+        'Community Certificate.',
+    ],
+    applicationProcess: 'Applications are processed through the Fisheries Department. Beneficiary lists are prepared at the village level and verified by department officials.'
   }
 ];
 

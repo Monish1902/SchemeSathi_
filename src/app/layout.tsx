@@ -1,10 +1,10 @@
 import type {Metadata} from 'next';
 import './globals.css';
-import { Toaster } from '@/components/ui/toaster';
 import { Inter } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
+import { ClientOnlyToaster } from '@/components/client-only-toaster';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -30,7 +30,7 @@ export default function RootLayout({
           <FirebaseClientProvider>
             {children}
           </FirebaseClientProvider>
-          <Toaster />
+          <ClientOnlyToaster />
         </ThemeProvider>
       </body>
     </html>

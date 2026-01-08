@@ -423,10 +423,10 @@ export function EligibilityForm() {
                         <FormItem>
                           <FormLabel>Annual Family Income (₹)</FormLabel>
                           <FormControl>
-                            <Input type="number" placeholder="e.g., 100000" {...field} />
+                            <Input type="number" placeholder="e.g., 1,00,000" {...field} />
                           </FormControl>
                           <FormDescription>
-                            e.g., &lt; ₹1.2 Lakh, &lt; ₹2.5 Lakh.
+                            e.g., &lt; ₹1,20,000 (1.2 Lakh), &lt; ₹2,50,000 (2.5 Lakh).
                           </FormDescription>
                           <FormMessage />
                         </FormItem>

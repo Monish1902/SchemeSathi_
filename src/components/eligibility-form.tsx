@@ -58,6 +58,17 @@ export const formSchema = z.object({
 
 export type FormSchemaType = z.infer<typeof formSchema>;
 
+const formatIndianNumber = (num: number | string) => {
+  const str = num.toString();
+  const lastThree = str.substring(str.length - 3);
+  const otherNumbers = str.substring(0, str.length - 3);
+  if (otherNumbers !== '') {
+    return otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ',') + ',' + lastThree;
+  }
+  return lastThree;
+};
+
+
 export function EligibilityForm() {
   const [loading, setLoading] = useState(false);
   const [isProfileLoading, setIsProfileLoading] = useState(true);
@@ -423,7 +434,19 @@ export function EligibilityForm() {
                         <FormItem>
                           <FormLabel>Annual Family Income (₹)</FormLabel>
                           <FormControl>
-                            <Input type="number" placeholder="e.g., 1,00,000" {...field} />
+                            <Input
+                              type="text"
+                              placeholder="e.g., 1,00,000"
+                              {...field}
+                              onChange={(e) => {
+                                const rawValue = e.target.value.replace(/,/g, '');
+                                if (/^\d*$/.test(rawValue)) {
+                                  const numValue = Number(rawValue);
+                                  field.onChange(numValue); // Update form state with number
+                                }
+                              }}
+                              value={field.value > 0 ? formatIndianNumber(field.value) : ''}
+                            />
                           </FormControl>
                           <FormDescription>
                             e.g., &lt; ₹1,20,000 (1.2 Lakh), &lt; ₹2,50,000 (2.5 Lakh).

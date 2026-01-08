@@ -13,7 +13,7 @@ export default function SignUpPage() {
 
   useEffect(() => {
     if (!isUserLoading && user) {
-      router.replace('/dashboard');
+      router.replace('/dashboard/about');
     }
   }, [user, isUserLoading, router]);
 

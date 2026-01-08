@@ -1,3 +1,4 @@
+
 'use client';
 
 import { LoginForm } from '@/components/login-form';
@@ -12,7 +13,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (!isUserLoading && user) {
-      router.replace('/dashboard');
+      router.replace('/dashboard/about');
     }
   }, [user, isUserLoading, router]);
 

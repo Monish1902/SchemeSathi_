@@ -142,7 +142,7 @@ export function EligibilityForm() {
         toast({
           variant: 'destructive',
           title: 'AI Assistant Error',
-          description: 'Could not fetch scheme recommendations. Please ensure your API key is valid. Your profile was saved.',
+          description: 'Could not fetch AI recommendations at this time. This may be a temporary issue. Your profile was saved.',
           duration: 9000,
         });
       }

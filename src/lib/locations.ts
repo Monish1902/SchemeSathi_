@@ -240,7 +240,7 @@ export const andhraPradeshData = {
     "Jaggampeta",
     "Kakinada (Rural)",
     "Kakinada (Urban)",
-t   "Karapa",
+    "Karapa",
     "Kirlampudi",
     "Kotananduru",
     "Kothapeta",

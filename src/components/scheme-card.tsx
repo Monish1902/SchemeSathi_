@@ -1,15 +1,18 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Scheme } from '@/lib/types';
+import { formatIndianCurrency } from '@/lib/utils';
 import { ArrowRight, Briefcase, GraduationCap, Heart, House, Leaf, PiggyBank, User, Handshake, Tractor, PersonStanding, Fish } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from './ui/badge';
 
 // A simple function to extract a monetary value from the benefits string.
 // This is a basic implementation and might need to be more robust.
-const getBenefitAmount = (benefits: string): string | null => {
-    const match = benefits.match(/₹[0-9,]+/);
-    return match ? match[0] : null;
+const getBenefitAmount = (benefits: string): number | null => {
+    const match = benefits.match(/₹?([0-9,]+)/);
+    if (!match) return null;
+    const amount = parseInt(match[1].replace(/,/g, ''), 10);
+    return isNaN(amount) ? null : amount;
 }
 
 const categoryIcons: { [key in Scheme['category']]: React.ReactNode } = {
@@ -46,10 +49,10 @@ export function SchemeCard({ scheme }: { scheme: Scheme }) {
         </CardHeader>
         <CardContent>
           <CardDescription>{scheme.description}</CardDescription>
-           {benefitAmount && (
+           {benefitAmount !== null && (
             <div className="mt-4">
-                <p className="text-sm font-semibold text-card-foreground">Benefit Amount</p>
-                <p className="text-2xl font-bold text-primary">{benefitAmount}</p>
+                <p className="text-sm font-semibold text-card-foreground">Key Benefit</p>
+                <p className="text-2xl font-bold text-primary">{formatIndianCurrency(benefitAmount)}</p>
             </div>
            )}
         </CardContent>

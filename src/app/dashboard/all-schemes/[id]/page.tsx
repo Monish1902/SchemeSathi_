@@ -20,6 +20,14 @@ import { useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label }from '@/components/ui/label';
 import { Loader2 } from 'lucide-react';
+import { formatIndianCurrency } from '@/lib/utils';
+
+const getBenefitAmount = (benefits: string): number | null => {
+    const match = benefits.match(/₹?([0-9,]+)/);
+    if (!match) return null;
+    const amount = parseInt(match[1].replace(/,/g, ''), 10);
+    return isNaN(amount) ? null : amount;
+}
 
 export default function SchemeDetailPage() {
   const params = useParams();
@@ -34,6 +42,8 @@ export default function SchemeDetailPage() {
   if (!scheme) {
     notFound();
   }
+
+  const benefitAmount = getBenefitAmount(scheme.benefits);
 
   const handleSaveStatus = async () => {
     if (!user || !firestore) {
@@ -89,8 +99,14 @@ export default function SchemeDetailPage() {
             <div>
               <CardTitle className="text-3xl mb-2">{scheme.name}</CardTitle>
               <CardDescription>{scheme.description}</CardDescription>
+               {benefitAmount !== null && (
+                <div className="mt-4">
+                    <p className="text-sm font-semibold text-card-foreground">Key Benefit</p>
+                    <p className="text-3xl font-bold text-primary">{formatIndianCurrency(benefitAmount)}</p>
+                </div>
+               )}
             </div>
-            <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 shrink-0">
+            <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 shrink-0 mt-4 md:mt-0">
               <a href={scheme.applyLink} target="_blank" rel="noopener noreferrer">
                 Know More <Globe className="ml-2 h-4 w-4" />
               </a>

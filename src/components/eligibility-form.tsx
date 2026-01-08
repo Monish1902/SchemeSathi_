@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -119,7 +120,7 @@ export function EligibilityForm() {
     setLoading(true);
     try {
       // 1. Save profile to Firestore
-      saveUserProfile(firestore, user.uid, values);
+      await saveUserProfile(firestore, user.uid, values);
 
       toast({
         title: 'Profile Saved!',
@@ -127,25 +128,33 @@ export function EligibilityForm() {
       });
 
       // 2. Fetch recommendations from AI
-      const recommendations = await recommendSchemes(values);
-
-      // 3. Save recommendations to localStorage for quick access on other pages
-      localStorage.setItem('schemeRecommendations', JSON.stringify(recommendations));
-
-      toast({
-        title: 'Recommendations Updated!',
-        description: 'New scheme recommendations are available for you.',
-      });
+      try {
+        const recommendations = await recommendSchemes(values);
+        // 3. Save recommendations to localStorage
+        localStorage.setItem('schemeRecommendations', JSON.stringify(recommendations));
+        toast({
+          title: 'Recommendations Updated!',
+          description: 'New scheme recommendations are available for you.',
+        });
+      } catch (aiError) {
+        console.error('AI recommendation error:', aiError);
+        toast({
+          variant: 'destructive',
+          title: 'AI Assistant Error',
+          description: 'Could not fetch scheme recommendations at this time. This may be due to an API key issue or a network problem.',
+          duration: 9000,
+        });
+      }
       
       // 4. Redirect to schemes page
       router.push('/dashboard');
 
     } catch (error) {
-      console.error('An error occurred:', error);
+      console.error('An error occurred during profile save:', error);
       toast({
         variant: 'destructive',
         title: 'Uh oh! Something went wrong.',
-        description: 'There was a problem saving your profile or fetching recommendations.',
+        description: 'There was a problem saving your profile.',
       });
     } finally {
       setLoading(false);
@@ -374,3 +383,5 @@ export function EligibilityForm() {
     </Card>
   );
 }
+
+    

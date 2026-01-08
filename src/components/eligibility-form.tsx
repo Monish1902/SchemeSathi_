@@ -49,6 +49,9 @@ export const formSchema = z.object({
   disability: z.boolean().default(false),
   occupation: z.enum(['student', 'employed', 'unemployed', 'farmer', 'driver', 'weaver', 'daily worker', 'other', 'fisherman', 'housewife'], { required_error: 'Occupation is required.' }),
   landHolding: z.string().optional(),
+  vehiclesOwned: z.boolean().default(false).describe('Whether the user owns a four-wheeler vehicle.'),
+  houseType: z.enum(['owned', 'rented', 'none'], { required_error: 'House ownership status is required.' }),
+  educationQualification: z.enum(['uneducated', '1-10', 'inter', 'bachelors', 'masters'], { required_error: 'Education qualification is required.' }),
 });
 
 export type FormSchemaType = z.infer<typeof formSchema>;
@@ -76,6 +79,9 @@ export function EligibilityForm() {
       disability: false,
       occupation: 'student',
       landHolding: '0',
+      vehiclesOwned: false,
+      houseType: 'rented',
+      educationQualification: 'bachelors',
     },
   });
 
@@ -224,6 +230,9 @@ export function EligibilityForm() {
                           <FormControl>
                             <Input type="number" placeholder="Your age" {...field} />
                           </FormControl>
+                           <FormDescription>
+                            e.g., 18-59, 60+ (pensions), 8-21 (student)
+                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -347,6 +356,7 @@ export function EligibilityForm() {
                               </FormItem>
                             </RadioGroup>
                           </FormControl>
+                           <FormDescription>Note if a scheme is women-headed priority.</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -413,11 +423,50 @@ export function EligibilityForm() {
                                     <SelectItem value=">25">More than 25 acres</SelectItem>
                                 </SelectContent>
                             </Select>
-                            <FormDescription>Select 'No land' if not applicable.</FormDescription>
+                             <FormDescription>e.g., 0-3 acres wet, 0-10 acres dry.</FormDescription>
                             <FormMessage />
                             </FormItem>
                         )}
                         />
+                     <FormField
+                      control={form.control}
+                      name="houseType"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>House Ownership</FormLabel>
+                           <Select onValueChange={field.onChange} value={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select your house ownership status" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                                <SelectItem value="owned">Owned</SelectItem>
+                                <SelectItem value="rented">Rented</SelectItem>
+                                <SelectItem value="none">No House</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="vehiclesOwned"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                          <div className="space-y-0.5">
+                            <FormLabel className="text-base">Own a 4-Wheeler</FormLabel>
+                            <FormDescription>
+                              Do you or your family own a four-wheeler vehicle?
+                            </FormDescription>
+                          </div>
+                          <FormControl>
+                            <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
                   </div>
                 </AccordionContent>
               </AccordionItem>
@@ -450,6 +499,30 @@ export function EligibilityForm() {
                                   <SelectItem value="fisherman">Fisherman</SelectItem>
                                   <SelectItem value="housewife">Housewife</SelectItem>
                                   <SelectItem value="other">Other</SelectItem>
+                              </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="educationQualification"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Education Qualification</FormLabel>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                              <FormControl>
+                                  <SelectTrigger>
+                                  <SelectValue placeholder="Select your education level" />
+                                  </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                  <SelectItem value="uneducated">Uneducated</SelectItem>
+                                  <SelectItem value="1-10">1st to 10th</SelectItem>
+                                  <SelectItem value="inter">Intermediate</SelectItem>
+                                  <SelectItem value="bachelors">Bachelor's Degree</SelectItem>
+                                  <SelectItem value="masters">Master's Degree</SelectItem>
                               </SelectContent>
                           </Select>
                           <FormMessage />

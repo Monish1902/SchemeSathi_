@@ -23,7 +23,10 @@ const RecommendSchemesInputSchema = z.object({
     category: z.enum(['SC', 'ST', 'BC', 'EBC', 'Minority', 'Brahmin', 'EWS', 'General']).describe('The social category of the user (e.g., SC, ST, BC, EBC, Minority).'),
     disability: z.boolean().describe('Whether the user has a disability.'),
     occupation: z.enum(['student', 'employed', 'unemployed', 'farmer', 'driver', 'weaver', 'daily worker', 'other', 'fisherman', 'housewife']).describe('The occupation of the user (e.g., Farmer, Student, Fisherman).'),
-    landHolding: z.string().optional().describe('The amount of land owned, if any. Critical for farmer schemes (e.g., 0-3 acres wet, 0-10 acres dry).')
+    landHolding: z.string().optional().describe('The amount of land owned, if any. Critical for farmer schemes (e.g., 0-3 acres wet, 0-10 acres dry).'),
+    vehiclesOwned: z.boolean().describe('Whether the user or their family owns a four-wheeler vehicle. This is often a disqualifier.'),
+    houseType: z.enum(['owned', 'rented', 'none']).describe('The user\'s housing situation (Owned, Rented, or No House).'),
+    educationQualification: z.enum(['uneducated', '1-10', 'inter', 'bachelors', 'masters']).describe('The user\'s highest level of education.'),
 });
 export type RecommendSchemesInput = z.infer<typeof RecommendSchemesInputSchema>;
 
@@ -61,9 +64,12 @@ Social Category: {{{category}}} (Crucial for category-specific schemes like SC/S
 Disability: {{{disability}}}
 Occupation: {{{occupation}}} (Match with schemes for Farmers, Fishermen, Students, etc.)
 Land Holding: {{{landHolding}}} (For farmer schemes, e.g., 0-3 acres wet, 0-10 acres dry)
+Owns 4-Wheeler Vehicle: {{{vehiclesOwned}}} (This often disqualifies users from welfare schemes)
+House Type: {{{houseType}}} (Crucial for housing schemes if 'rented' or 'none')
+Education Qualification: {{{educationQualification}}} (Relevant for student or skill development schemes)
 
 Your recommendations must follow these specific rules:
-1.  **Health or Housing (1 Scheme):** Recommend ONE scheme that is primarily focused on health/medical benefits OR a housing scheme.
+1.  **Health or Housing (1 Scheme):** Recommend ONE scheme that is primarily focused on health/medical benefits OR a housing scheme. If user's houseType is 'owned', do not recommend a housing scheme.
 2.  **Occupation-Based Scheme (1 Scheme):** Recommend ONE scheme that is directly relevant to the user's stated occupation (e.g., a farmer scheme for a 'Farmer', a student scheme for a 'Student'). If occupation is 'unemployed' or 'housewife', find a suitable welfare or empowerment scheme.
 3.  **Income/Category Scheme (1 Scheme):** Recommend ONE scheme related to financial assistance or empowerment based on their income level and social category (e.g., YSR Cheyutha for women in specific categories).
 

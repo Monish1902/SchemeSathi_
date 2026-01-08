@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "UserProfile": {
@@ -46,6 +47,30 @@
           "items": {
             "type": "string"
           }
+        },
+        "vehiclesOwned": {
+          "type": "boolean",
+          "description": "Whether the user or their family owns a four-wheeler vehicle."
+        },
+        "houseType": {
+          "type": "string",
+          "enum": [
+            "owned",
+            "rented",
+            "none"
+          ],
+          "description": "The user's housing situation."
+        },
+        "educationQualification": {
+          "type": "string",
+          "enum": [
+            "uneducated",
+            "1-10",
+            "inter",
+            "bachelors",
+            "masters"
+          ],
+          "description": "The user's highest level of education."
         }
       },
       "required": [

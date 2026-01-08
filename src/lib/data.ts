@@ -314,25 +314,5 @@ export const schemes: Scheme[] = [
 
 
 export const applications: Application[] = [
-  {
-    id: 'app-1',
-    schemeId: 'ysr-vahana-mitra',
-    schemeName: 'YSR Vahana Mitra Scheme',
-    dateApplied: '2023-05-15',
-    status: 'In Review',
-  },
-  {
-    id: 'app-2',
-    schemeId: 'dr-ntr-vaidya-seva',
-    schemeName: 'Dr. NTR Vaidya Seva Scheme',
-    dateApplied: '2023-04-20',
-    status: 'Approved',
-  },
-  {
-    id: 'app-3',
-    schemeId: 'indiramma-housing',
-    schemeName: 'INDIRAMMA Housing Scheme',
-    dateApplied: '2023-06-01',
-    status: 'Submitted',
-  },
+ 
 ];

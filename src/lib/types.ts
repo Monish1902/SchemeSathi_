@@ -14,6 +14,6 @@ export type Application = {
   id: string;
   schemeId: string;
   schemeName: string;
-  dateApplied: string;
+  applicationDate: string;
   status: 'Submitted' | 'In Review' | 'Approved' | 'Rejected';
 };

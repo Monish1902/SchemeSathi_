@@ -55,51 +55,109 @@ export default function MySchemesPage() {
     fetchProfile();
   }, [user, firestore]);
   
-  // Start with the two static schemes
-  const staticRecommendedSchemeNames = [
-    'Dr. NTR Vaidya Seva Scheme',
-    'INDIRAMMA Housing Scheme'
-  ];
-
-  // Get scheme names from AI recommendations
-  const aiRecommendedSchemeNames = recommendations
-    ? recommendations.map(rec => rec.schemeName)
-    : [];
-
-  // Get scheme names based on occupation
-  const occupationSchemeNames: string[] = [];
-  if (profile?.occupation) {
-    switch (profile.occupation) {
-      case 'farmer':
-        occupationSchemeNames.push('Annadata Sukhibhava Scheme', 'Rythu Bharosa Scheme');
-        break;
-      case 'student':
-        occupationSchemeNames.push(
-          'Dokka Seethamma Midday Meal Scheme (PM POSHAN)',
-          'AP Skill Development Schemes (APSSDC & PMKVY)',
-          'Thalliki Vandanam Scheme'
-        );
-        break;
-      case 'driver':
-        occupationSchemeNames.push('YSR Vahana Mitra Scheme (Auto Driver Sevalo)');
-        break;
-      case 'unemployed':
-        occupationSchemeNames.push('AP Skill Development Schemes (APSSDC & PMKVY)');
-        break;
+  const recommendedSchemes = useMemo(() => {
+    if (!profile) {
+      return [];
     }
-  }
 
-  // Combine and deduplicate scheme names
-  const allRecommendedSchemeNames = Array.from(new Set([
-    ...staticRecommendedSchemeNames, 
-    ...aiRecommendedSchemeNames,
-    ...occupationSchemeNames,
-  ]));
+    // 1. Get scheme names from AI recommendations
+    const aiRecommendedSchemeNames = recommendations
+      ? recommendations.map(rec => rec.schemeName)
+      : [];
+    
+    // 2. Rule-based eligibility check
+    const ruleBasedSchemes = schemes.filter(scheme => {
+        // Always include universal health scheme
+        if (scheme.id === 'dr-ntr-vaidya-seva') {
+            return true;
+        }
 
-  // Filter the main schemes list to get the scheme objects
-  const recommendedSchemes = schemes.filter(scheme =>
-    allRecommendedSchemeNames.includes(scheme.name)
-  );
+        // Aadabidda Nidhi Scheme
+        if (scheme.id === 'aadabidda-nidhi') {
+            if (profile.gender === 'female' && profile.age >= 18 && profile.age <= 59) {
+                return true;
+            }
+        }
+        
+        // Annadata Sukhibhava Scheme
+        if (scheme.id === 'annadata-sukhibhava') {
+             if (profile.occupation === 'farmer' && profile.landHolding && !profile.landHolding.startsWith('>')) {
+                return true;
+            }
+        }
+
+        // YSR Vahana Mitra
+        if (scheme.id === 'ysr-vahana-mitra') {
+            if (profile.occupation === 'driver') {
+                return true;
+            }
+        }
+
+        // Thalliki Vandanam Scheme
+        if (scheme.id === 'thalliki-vandanam') {
+             if (profile.occupation === 'housewife' || (profile.gender === 'female' && profile.familySize > 1)) {
+                 return true;
+             }
+        }
+
+        // INDIRAMMA Housing Scheme
+        if (scheme.id === 'indiramma-housing') {
+            if (profile.houseType === 'rented' || profile.houseType === 'none') {
+                return true;
+            }
+        }
+
+        // AP Skill Development
+        if (scheme.id === 'ap-skill-development') {
+            if (profile.occupation === 'unemployed' || profile.occupation === 'student' && profile.age >= 18 && profile.age <= 35) {
+                return true;
+            }
+        }
+        
+        // YSR Cheyutha
+        if (scheme.id === 'ysr-cheyutha') {
+            if (profile.gender === 'female' && profile.age >= 45 && profile.age <= 60 && ['SC', 'ST', 'BC', 'Minority'].includes(profile.category)) {
+                return true;
+            }
+        }
+
+        // Rythu Bharosa
+        if (scheme.id === 'rythu-bharosa') {
+            if (profile.occupation === 'farmer') {
+                return true;
+            }
+        }
+
+        // YSR Kapu Nestham
+        if (scheme.id === 'ysr-kapu-nestham') {
+             if (profile.gender === 'female' && profile.age >= 45 && profile.age <= 60 && profile.category === 'General') { // Assuming Kapu falls under general for this logic
+                return true;
+            }
+        }
+
+        // NTR Bharosa Pension Scheme
+        if (scheme.id === 'ntr-bharosa-pension') {
+            if (profile.age >= 60) {
+                return true;
+            }
+        }
+
+        return false;
+    }).map(s => s.name);
+
+
+    // 3. Combine and deduplicate scheme names
+    const allRecommendedSchemeNames = Array.from(new Set([
+      ...ruleBasedSchemes, 
+      ...aiRecommendedSchemeNames,
+    ]));
+
+    // 4. Filter the main schemes list to get the final scheme objects
+    return schemes.filter(scheme =>
+      allRecommendedSchemeNames.includes(scheme.name)
+    );
+  }, [profile, recommendations]);
+
 
   return (
     <div className="space-y-6">

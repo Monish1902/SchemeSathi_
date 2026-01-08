@@ -49,7 +49,7 @@ export async function recommendSchemes(input: RecommendSchemesInput): Promise<Re
 
 const recommendSchemesPrompt = ai.definePrompt({
   name: 'recommendSchemesPrompt',
-  model: googleAI.model('gemini-1.5-flash-latest'),
+  model: googleAI.model('gemini-1.5-flash'),
   input: {schema: RecommendSchemesInputSchema},
   output: {schema: RecommendSchemesOutputSchema},
   prompt: `You are an expert advisor on Indian government schemes, specifically for Andhra Pradesh. Based on the user's detailed profile below, you must recommend exactly three schemes.

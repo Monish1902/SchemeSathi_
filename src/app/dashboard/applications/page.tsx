@@ -18,6 +18,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useUser, useFirestore, useCollection } from '@/firebase';
+import { useMemoFirebase } from '@/firebase/provider';
 import { collection, query } from 'firebase/firestore';
 import { Loader2 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -29,7 +30,7 @@ export default function ApplicationsPage() {
   const { user } = useUser();
   const firestore = useFirestore();
 
-  const applicationsQuery = useMemo(() => {
+  const applicationsQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
     return query(collection(firestore, 'users', user.uid, 'applicationStatuses'));
   }, [firestore, user]);

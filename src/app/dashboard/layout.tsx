@@ -42,20 +42,23 @@ export default function DashboardLayout({
       return;
     }
 
-    // Check for user profile existence
+    if (isProfileChecked) {
+      // If we've already checked and confirmed the profile, don't re-run the logic.
+      return;
+    }
+
     const checkProfile = async () => {
+      if (!firestore || !user) return;
       const profile = await getUserProfile(firestore, user.uid);
       if (!profile && pathname !== '/dashboard/eligibility') {
-        // If profile doesn't exist and user is not on the eligibility page, redirect them.
         router.replace('/dashboard/eligibility');
       } else {
-        // If profile exists or they are on the right page, allow access.
         setIsProfileChecked(true);
       }
     };
 
     checkProfile();
-  }, [user, isUserLoading, router, firestore, pathname]);
+  }, [user, isUserLoading, router, firestore, pathname, isProfileChecked]);
 
   if (isUserLoading || !user || !isProfileChecked) {
     return (

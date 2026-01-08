@@ -42,10 +42,13 @@ export const formSchema = z.object({
   }),
   annualIncome: z.coerce.number().min(0, { message: 'Annual income is required.' }),
   familySize: z.coerce.number().min(1, { message: 'Family size is required.' }),
-  location: z.string().min(1, { message: 'Location is required.' }),
-  category: z.string().min(1, { message: 'Category is required.' }),
+  location: z.enum(['Urban', 'Rural'], { required_error: 'Location type is required.'}),
+  district: z.string().min(1, { message: 'District is required.' }),
+  mandal: z.string().min(1, { message: 'Mandal is required.' }),
+  category: z.enum(['SC', 'ST', 'BC', 'EBC', 'Minority', 'Brahmin', 'EWS', 'General'], { required_error: 'Category is required.' }),
   disability: z.boolean().default(false),
-  occupation: z.enum(['student', 'employed', 'unemployed', 'farmer', 'driver', 'weaver', 'daily worker', 'other'], { required_error: 'Occupation is required.' }),
+  occupation: z.enum(['student', 'employed', 'unemployed', 'farmer', 'driver', 'weaver', 'daily worker', 'other', 'fisherman', 'housewife'], { required_error: 'Occupation is required.' }),
+  landHolding: z.string().optional(),
 });
 
 export type FormSchemaType = z.infer<typeof formSchema>;
@@ -67,9 +70,12 @@ export function EligibilityForm() {
       annualIncome: 50000,
       familySize: 4,
       location: 'Urban',
+      district: '',
+      mandal: '',
       category: 'General',
       disability: false,
       occupation: 'student',
+      landHolding: '0',
     },
   });
 
@@ -143,7 +149,7 @@ export function EligibilityForm() {
         toast({
           variant: 'destructive',
           title: 'AI Assistant Error',
-          description: "Could not fetch AI recommendations at this time. This may be a temporary issue with the service. Your profile was still saved successfully.",
+          description: "Could not fetch AI recommendations at this time. The AI service may be temporarily unavailable. Your profile was still saved successfully.",
           duration: 9000,
         });
       }
@@ -240,7 +246,7 @@ export function EligibilityForm() {
                       name="location"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Location</FormLabel>
+                          <FormLabel>Location Type</FormLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger>
@@ -252,6 +258,32 @@ export function EligibilityForm() {
                               <SelectItem value="Rural">Rural</SelectItem>
                             </SelectContent>
                           </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="district"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>District</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g., Guntur" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="mandal"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Mandal</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g., Tadikonda" {...field} />
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -269,10 +301,14 @@ export function EligibilityForm() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="General">General</SelectItem>
-                              <SelectItem value="OBC">OBC</SelectItem>
-                              <SelectItem value="SC">SC</SelectItem>
-                              <SelectItem value="ST">ST</SelectItem>
+                                <SelectItem value="SC">SC</SelectItem>
+                                <SelectItem value="ST">ST</SelectItem>
+                                <SelectItem value="BC">BC</SelectItem>
+                                <SelectItem value="EBC">EBC</SelectItem>
+                                <SelectItem value="Minority">Minority</SelectItem>
+                                <SelectItem value="Brahmin">Brahmin</SelectItem>
+                                <SelectItem value="EWS">EWS</SelectItem>
+                                <SelectItem value="General">General</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -346,14 +382,42 @@ export function EligibilityForm() {
                       name="annualIncome"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Annual Income (₹)</FormLabel>
+                          <FormLabel>Annual Family Income (₹)</FormLabel>
                           <FormControl>
                             <Input type="number" placeholder="e.g., 100000" {...field} />
                           </FormControl>
+                          <FormDescription>
+                            e.g., &lt;₹10k for rural, &lt;₹12k for urban, &lt;₹2.5L etc.
+                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
+                     <FormField
+                        control={form.control}
+                        name="landHolding"
+                        render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>Land Holding (in Acres)</FormLabel>
+                            <Select onValueChange={field.onChange} value={field.value}>
+                                <FormControl>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select your land holding size" />
+                                </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    <SelectItem value="0">No land</SelectItem>
+                                    <SelectItem value="0-3 wet">0-3 acres (Wet)</SelectItem>
+                                    <SelectItem value="0-10 dry">0-10 acres (Dry)</SelectItem>
+                                    <SelectItem value="0-25 mixed">0-25 acres (Mixed)</SelectItem>
+                                    <SelectItem value=">25">More than 25 acres</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <FormDescription>Select 'No land' if not applicable.</FormDescription>
+                            <FormMessage />
+                            </FormItem>
+                        )}
+                        />
                   </div>
                 </AccordionContent>
               </AccordionItem>
@@ -379,10 +443,12 @@ export function EligibilityForm() {
                                   <SelectItem value="student">Student</SelectItem>
                                   <SelectItem value="employed">Employed</SelectItem>
                                   <SelectItem value="unemployed">Unemployed</SelectItem>
-                                  <SelectItem value="farmer">Farmer</SelectItem>
+                                  <SelectItem value="farmer">Farmer/Tenant</SelectItem>
                                   <SelectItem value="driver">Driver</SelectItem>
                                   <SelectItem value="weaver">Weaver</SelectItem>
                                   <SelectItem value="daily worker">Daily Worker</SelectItem>
+                                  <SelectItem value="fisherman">Fisherman</SelectItem>
+                                  <SelectItem value="housewife">Housewife</SelectItem>
                                   <SelectItem value="other">Other</SelectItem>
                               </SelectContent>
                           </Select>

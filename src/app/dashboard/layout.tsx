@@ -33,36 +33,53 @@ export default function DashboardLayout({
   const [isProfileChecked, setIsProfileChecked] = useState(false);
 
   useEffect(() => {
-    if (isUserLoading) return;
+    // Wait until the user's authentication status is resolved.
+    if (isUserLoading) {
+      return;
+    }
 
+    // If there is no user, redirect to the login page.
     if (!user) {
-      router.push('/login');
+      router.replace('/login');
       return;
     }
 
-    if (isProfileChecked) {
-      // If we've already checked and confirmed the profile, don't re-run the logic.
-      return;
-    }
-
+    // If we have a user, check their profile, but only once.
+    let profileCheckCompleted = false;
     const checkProfile = async () => {
-      if (!firestore || !user) return;
-      const profile = await getUserProfile(firestore, user.uid);
-      if (!profile && pathname !== '/dashboard/eligibility') {
-        router.replace('/dashboard/eligibility');
-      } else {
-        setIsProfileChecked(true);
+      if (profileCheckCompleted) return;
+      if (firestore && user) {
+        const profile = await getUserProfile(firestore, user.uid);
+        // If no profile exists and they aren't on the eligibility page, redirect them.
+        if (!profile && pathname !== '/dashboard/eligibility') {
+          router.replace('/dashboard/eligibility');
+        }
       }
+      // Mark the profile check as complete to unlock the UI.
+      setIsProfileChecked(true);
+      profileCheckCompleted = true;
     };
 
     checkProfile();
-  }, [user, isUserLoading, router, firestore, pathname, isProfileChecked]);
 
-  if (isUserLoading || !user || !isProfileChecked) {
+  }, [user, isUserLoading, router, firestore, pathname]);
+
+  // Show the loader until both auth and profile checks are done.
+  if (isUserLoading || !isProfileChecked) {
     return (
       <div className="flex min-h-screen w-full flex-col items-center justify-center">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
         <p className="mt-4 text-muted-foreground">Loading your dashboard...</p>
+      </div>
+    );
+  }
+  
+  // If user is not loading, but somehow no user object and profile check is done, it implies redirect is happening
+  if (!user) {
+     return (
+      <div className="flex min-h-screen w-full flex-col items-center justify-center">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+        <p className="mt-4 text-muted-foreground">Redirecting...</p>
       </div>
     );
   }

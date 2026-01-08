@@ -5,7 +5,9 @@ service cloud.firestore {
     
     // Users can only read/write their own data
     match /users/{userId} {
-      allow read: if request.auth.uid == userId;
+      // Allow a user to get their own document, but not list all users.
+      allow get: if request.auth.uid == userId;
+      allow list: if false;
       allow write: if request.auth.uid == userId;
       allow update: if request.auth.uid == userId && 
                        (request.resource.data.accountCreatedAt == resource.data.accountCreatedAt); // Prevent modification of creation time

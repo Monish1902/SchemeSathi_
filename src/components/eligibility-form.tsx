@@ -127,10 +127,10 @@ export function EligibilityForm() {
         description: 'Your information has been saved to your account.',
       });
 
-      // 2. Fetch recommendations from AI
+      // 2. Fetch recommendations from AI, but handle failure gracefully
       try {
         const recommendations = await recommendSchemes(values);
-        // 3. Save recommendations to localStorage
+        // 3. Save recommendations to localStorage on success
         localStorage.setItem('schemeRecommendations', JSON.stringify(recommendations));
         toast({
           title: 'Recommendations Updated!',
@@ -138,15 +138,16 @@ export function EligibilityForm() {
         });
       } catch (aiError) {
         console.error('AI recommendation error:', aiError);
+        // Inform the user but don't block the flow
         toast({
           variant: 'destructive',
           title: 'AI Assistant Error',
-          description: 'Could not fetch scheme recommendations at this time. This may be due to an API key issue or a network problem.',
+          description: 'Could not fetch scheme recommendations. Please ensure your API key is valid. Your profile was saved.',
           duration: 9000,
         });
       }
       
-      // 4. Redirect to schemes page
+      // 4. Always redirect to the dashboard after attempting AI call
       router.push('/dashboard');
 
     } catch (error) {
@@ -299,7 +300,7 @@ export function EligibilityForm() {
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select your category" />
-                        </SelectTrigger>
+                        </Trigger>
                       </FormControl>
                       <SelectContent>
                         <SelectItem value="General">General</SelectItem>
@@ -384,4 +385,5 @@ export function EligibilityForm() {
   );
 }
 
+    
     

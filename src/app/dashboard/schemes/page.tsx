@@ -73,9 +73,13 @@ export default function MySchemesPage() {
       }
     }
     
+    // Always include the universal health scheme
+    const universalSchemes = ['Dr. NTR Vaidya Seva Scheme'];
+
     const allRecommendedSchemeNames = Array.from(new Set([
       ...aiRecommendedSchemeNames,
       ...occupationBasedSchemes,
+      ...universalSchemes,
     ]));
 
     return schemes.filter(scheme =>
@@ -137,4 +141,3 @@ export default function MySchemesPage() {
     </div>
   );
 }
-

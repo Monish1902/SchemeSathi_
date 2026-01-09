@@ -462,7 +462,59 @@ export function EligibilityForm() {
                               <FormControl>
                                   <SelectTrigger>
                                   <SelectValue placeholder="Select your education level" />
-                                  </T_SECOND_ONE' is assigned a value but never used.\'\'\'
-another = "Yo!"
-'''))
-```
+                                  </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                  <SelectItem value="uneducated">Uneducated</SelectItem>
+                                  <SelectItem value="1-10">1st - 10th</SelectItem>
+                                  <SelectItem value="inter">Intermediate (12th)</SelectItem>
+                                  <SelectItem value="bachelors">Bachelors Degree</SelectItem>
+                                  <SelectItem value="masters">Masters Degree</SelectItem>
+                              </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                     <FormField
+                      control={form.control}
+                      name="houseType"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>House Ownership</FormLabel>
+                           <Select onValueChange={field.onChange} value={field.value}>
+                              <FormControl>
+                                  <SelectTrigger>
+                                  <SelectValue placeholder="Select your house ownership status" />
+                                  </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                  <SelectItem value="owned">Owned</SelectItem>
+                                  <SelectItem value="rented">Rented</SelectItem>
+                                  <SelectItem value="none">No House</SelectItem>
+                              </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+             <Button
+              type="submit"
+              disabled={loading || !user}
+              className="w-full md:w-auto bg-accent text-accent-foreground hover:bg-accent/90 mt-8"
+            >
+              {loading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : null}
+              {loading ? 'Saving...' : 'Save Profile & Find Schemes'}
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
+  );
+}

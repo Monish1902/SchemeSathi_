@@ -141,34 +141,45 @@ export function EligibilityForm() {
     }
     setLoading(true);
 
-    // Save the user profile (non-blocking)
-    saveUserProfile(firestore, user.uid, values);
-
-    toast({
-      title: 'Profile Saved!',
-      description: 'Your information has been saved to your account.',
-    });
-
     try {
-      // After saving, fetch AI recommendations
-      const recommendations = await recommendSchemes(values);
-      localStorage.setItem('schemeRecommendations', JSON.stringify(recommendations));
+      // Await the profile saving to ensure it completes before proceeding
+      await saveUserProfile(firestore, user.uid, values);
+
       toast({
-        title: 'Recommendations Updated!',
-        description: 'New scheme recommendations are available for you.',
+        title: 'Profile Saved!',
+        description: 'Your information has been successfully updated.',
       });
-    } catch (aiError) {
-      console.error('AI recommendation error:', aiError);
+
+      // After saving, fetch AI recommendations
+      try {
+        const recommendations = await recommendSchemes(values);
+        localStorage.setItem('schemeRecommendations', JSON.stringify(recommendations));
+        toast({
+            title: 'Recommendations Updated!',
+            description: 'New scheme recommendations are available for you.',
+        });
+      } catch (aiError) {
+          console.error('AI recommendation error:', aiError);
+          toast({
+            variant: 'destructive',
+            title: 'AI Assistant Error',
+            description: "Could not fetch AI recommendations, but your profile was saved.",
+            duration: 9000,
+          });
+      }
+    } catch (saveError) {
+      console.error('Profile saving error:', saveError);
+      // The error emitter in saveUserProfile will have already triggered the global error display
       toast({
         variant: 'destructive',
-        title: 'AI Assistant Error',
-        description: "Could not fetch AI recommendations at this time. Your profile was still saved successfully.",
-        duration: 9000,
+        title: 'Save Failed',
+        description: "Your profile could not be saved. Please check your connection and try again.",
       });
     } finally {
-      // This will now run regardless of the AI call's success or failure
+      // This will now run regardless of success or failure
       setLoading(false);
-      router.push('/dashboard/schemes'); // Redirect to a relevant page
+      // Redirect to the schemes page to see updated results
+      router.push('/dashboard/schemes');
     }
   }
   

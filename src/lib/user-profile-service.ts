@@ -5,6 +5,7 @@ import {
   doc,
   setDoc,
   getDoc,
+  updateDoc,
   Firestore,
   serverTimestamp,
 } from 'firebase/firestore';
@@ -15,53 +16,64 @@ import type { FormSchemaType } from '@/components/eligibility-form';
 /**
  * Creates or updates a user's profile in Firestore.
  *
- * This function performs a non-blocking write operation. It uses `setDoc` with
- * `{ merge: true }` to create a new profile or update an existing one without
- * overwriting the entire document.
+ * This async function first checks if a document for the user already exists.
+ * If it does, it updates the document. If not, it creates a new one.
+ * This correctly handles the `accountCreatedAt` timestamp, which should only
+ * be set on creation.
  *
  * @param db The Firestore instance.
  * @param userId The UID of the user whose profile is being saved.
  * @param profileData The profile data to save, matching `FormSchemaType`.
  */
-export function saveUserProfile(
+export async function saveUserProfile(
   db: Firestore,
   userId: string,
   profileData: FormSchemaType
-) {
+): Promise<void> {
   const profileRef = doc(db, 'users', userId);
-  
-  const dataToSave = {
-    ...profileData,
-    uid: userId,
-    lastProfileUpdateAt: serverTimestamp(),
-    // Ensure fields match the new schema, converting where necessary
-    casteCategory: profileData.category,
-    housingStatus: profileData.houseType,
-    highestQualification: profileData.educationQualification,
-    employmentStatus: profileData.occupation,
-    hasVehicle: profileData.vehiclesOwned,
-    // Add account creation timestamp only if it's a new document
-    accountCreatedAt: serverTimestamp(),
-  };
 
-  // Use setDoc with merge to create or update.
-  // The operation is non-blocking (no `await`).
-  setDoc(
-    profileRef,
-    dataToSave,
-    { merge: true }
-  ).catch(error => {
+  try {
+    const docSnap = await getDoc(profileRef);
+
+    const dataToSave = {
+      ...profileData,
+      uid: userId,
+      fullName: profileData.name, // Ensure fullName is saved
+      lastProfileUpdateAt: serverTimestamp(),
+      casteCategory: profileData.category,
+      housingStatus: profileData.houseType,
+      highestQualification: profileData.educationQualification,
+      employmentStatus: profileData.occupation,
+      hasVehicle: profileData.vehiclesOwned,
+    };
+
+    if (docSnap.exists()) {
+      // Document exists, so update it.
+      // Do not include accountCreatedAt in an update.
+      await updateDoc(profileRef, dataToSave);
+    } else {
+      // Document does not exist, so create it.
+      // Include accountCreatedAt for the new document.
+      await setDoc(profileRef, {
+        ...dataToSave,
+        accountCreatedAt: serverTimestamp(),
+        accountStatus: 'active',
+      });
+    }
+  } catch (error) {
     // If the operation fails, create a detailed, contextual error.
     const permissionError = new FirestorePermissionError({
       path: profileRef.path,
       operation: 'write',
-      requestResourceData: dataToSave,
+      requestResourceData: profileData,
     });
     
-    // Emit the error for a global handler to catch.
+    // Emit the error for a global handler to catch and re-throw
     errorEmitter.emit('permission-error', permissionError);
-  });
+    throw error; // Re-throw to be caught by the calling function if needed.
+  }
 }
+
 
 /**
  * Fetches a user's profile from Firestore.
@@ -75,30 +87,36 @@ export async function getUserProfile(
   userId: string
 ): Promise<FormSchemaType | null> {
   const profileRef = doc(db, 'users', userId);
-  const docSnap = await getDoc(profileRef);
+  try {
+    const docSnap = await getDoc(profileRef);
 
-  if (docSnap.exists()) {
-    const data = docSnap.data();
-    // Map new fields back to old form schema fields for compatibility
-    return {
-      name: data.fullName || `${data.firstName} ${data.lastName}`,
-      age: data.age,
-      gender: data.gender,
-      annualIncome: data.annualFamilyIncome,
-      familySize: data.familySize,
-      location: data.location,
-      district: data.district,
-      mandal: data.mandal,
-      category: data.casteCategory,
-      disability: data.disabilityStatus !== 'None',
-      occupation: data.employmentStatus,
-      landHolding: `${data.landHoldingTotal} acres` || '',
-      vehiclesOwned: data.hasVehicle,
-      houseType: data.housingStatus,
-      educationQualification: data.highestQualification,
-    } as FormSchemaType;
-  } else {
-    // The user does not have a profile saved yet.
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      // Map new fields back to old form schema fields for compatibility
+      return {
+        name: data.fullName || data.name || `${data.firstName || ''} ${data.lastName || ''}`.trim(),
+        age: data.age,
+        gender: data.gender,
+        annualIncome: data.annualFamilyIncome || data.annualIncome,
+        familySize: data.familySize,
+        location: data.location,
+        district: data.district,
+        mandal: data.mandal,
+        category: data.casteCategory || data.category,
+        disability: data.disabilityStatus ? data.disabilityStatus !== 'None' : data.disability,
+        occupation: data.employmentStatus || data.occupation,
+        landHolding: data.landHolding || '',
+        vehiclesOwned: data.hasVehicle || data.vehiclesOwned,
+        houseType: data.housingStatus || data.houseType,
+        educationQualification: data.highestQualification || data.educationQualification,
+      } as FormSchemaType;
+    } else {
+      // The user does not have a profile saved yet.
+      return null;
+    }
+  } catch(e) {
+    console.error("Error fetching user profile:", e);
+    // Don't throw permission error here, just fail gracefully
     return null;
   }
 }

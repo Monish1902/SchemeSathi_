@@ -53,7 +53,7 @@ export default function MySchemesPage() {
             additionalSchemes.push('YSR Vahana Mitra Scheme (Auto Driver Sevalo)');
             break;
         case 'unemployed':
-            additionalSchemes.push('AP Skill Development Schemes (APSSDC & PMKVY)');
+            additionalSchemes.push('AP Skill Development Schemes (APSSDC & PMKVY)', 'INDIRAMMA Housing Scheme');
             break;
         case 'employed':
             additionalSchemes.push('AP Skill Development Schemes (APSSDC & PMKVY)');

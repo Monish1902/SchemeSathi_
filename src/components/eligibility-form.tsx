@@ -140,43 +140,35 @@ export function EligibilityForm() {
       return;
     }
     setLoading(true);
+
+    // Save the user profile (non-blocking)
+    saveUserProfile(firestore, user.uid, values);
+
+    toast({
+      title: 'Profile Saved!',
+      description: 'Your information has been saved to your account.',
+    });
+
     try {
-      // The saveUserProfile service now handles mapping to the new structure
-      await saveUserProfile(firestore, user.uid, values);
-
+      // After saving, fetch AI recommendations
+      const recommendations = await recommendSchemes(values);
+      localStorage.setItem('schemeRecommendations', JSON.stringify(recommendations));
       toast({
-        title: 'Profile Saved!',
-        description: 'Your information has been saved to your account.',
+        title: 'Recommendations Updated!',
+        description: 'New scheme recommendations are available for you.',
       });
-
-      try {
-        const recommendations = await recommendSchemes(values);
-        localStorage.setItem('schemeRecommendations', JSON.stringify(recommendations));
-        toast({
-          title: 'Recommendations Updated!',
-          description: 'New scheme recommendations are available for you.',
-        });
-      } catch (aiError) {
-        console.error('AI recommendation error:', aiError);
-        toast({
-          variant: 'destructive',
-          title: 'AI Assistant Error',
-          description: "Could not fetch AI recommendations at this time. Your profile was still saved successfully.",
-          duration: 9000,
-        });
-      }
-      
-      router.push('/dashboard');
-
-    } catch (error) {
-      console.error('An error occurred during profile save:', error);
+    } catch (aiError) {
+      console.error('AI recommendation error:', aiError);
       toast({
         variant: 'destructive',
-        title: 'Uh oh! Something went wrong.',
-        description: 'There was a problem saving your profile.',
+        title: 'AI Assistant Error',
+        description: "Could not fetch AI recommendations at this time. Your profile was still saved successfully.",
+        duration: 9000,
       });
     } finally {
+      // This will now run regardless of the AI call's success or failure
       setLoading(false);
+      router.push('/dashboard/schemes'); // Redirect to a relevant page
     }
   }
   
@@ -518,3 +510,5 @@ export function EligibilityForm() {
     </Card>
   );
 }
+
+    

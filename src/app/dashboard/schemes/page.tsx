@@ -9,32 +9,21 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { schemes } from '@/lib/data';
-import { Lightbulb, ArrowRight, FileText, GanttChart } from 'lucide-react';
+import { Lightbulb, ArrowRight, FileText } from 'lucide-react';
 import { SchemeCard } from '@/components/scheme-card';
-import { useUser, useFirestore, useCollection } from '@/firebase';
+import { useUser, useFirestore } from '@/firebase';
 import { useEffect, useState, useMemo } from 'react';
 import { RecommendSchemesOutput } from '@/ai/flows/recommend-schemes-based-on-eligibility';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { getUserProfile } from '@/lib/user-profile-service';
 import type { FormSchemaType } from '@/components/eligibility-form';
-import type { UserApplication } from '@/lib/types';
-import { useMemoFirebase } from '@/firebase/provider';
-import { collection, query, where } from 'firebase/firestore';
-
 
 export default function MySchemesPage() {
   const { user } = useUser();
   const firestore = useFirestore();
   const [recommendations, setRecommendations] = useState<RecommendSchemesOutput | null>(null);
   const [profile, setProfile] = useState<FormSchemaType | null>(null);
-
-  const applicationsQuery = useMemoFirebase(() => {
-    if (!firestore || !user) return null;
-    return query(collection(firestore, 'userApplications'), where('userId', '==', user.uid));
-  }, [firestore, user]);
-
-  const { data: applications, isLoading: isLoadingApplications } = useCollection<UserApplication>(applicationsQuery);
 
   useEffect(() => {
     try {
@@ -84,8 +73,6 @@ export default function MySchemesPage() {
       }
     }
     
-    // This logic is now simplified as the full eligibility engine would be backend-driven
-    // For now, we will rely on AI recommendations stored in localStorage
     const allRecommendedSchemeNames = Array.from(new Set([
       ...aiRecommendedSchemeNames,
       ...occupationBasedSchemes,
@@ -140,7 +127,7 @@ export default function MySchemesPage() {
                 </CardHeader>
                 <CardContent>
                     <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90">
-                        <Link href="/dashboard/profile">
+                        <Link href="/dashboard/eligibility">
                             Go to My Profile <ArrowRight className="ml-2 h-4 w-4" />
                         </Link>
                     </Button>
@@ -150,3 +137,4 @@ export default function MySchemesPage() {
     </div>
   );
 }
+

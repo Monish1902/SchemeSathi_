@@ -61,6 +61,9 @@ export default function MySchemesPage() {
         case 'fisherman':
             additionalSchemes.push('YSR Matsyakara Bharosa');
             break;
+        case 'other':
+            additionalSchemes.push('NTR Bharosa Pension Scheme', 'YSR Pension Kanuka');
+            break;
         default:
           break;
       }

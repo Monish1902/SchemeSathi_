@@ -92,7 +92,7 @@ export default function SchemeDetailPage() {
             <p className="text-muted-foreground">{scheme.applicationProcess}</p>
           </section>
           <section>
-            <h2 className="text-xl font-semibold tracking-tight mb-4 flex items-center"><Phone className="mr-2 h-5 w-5 text-primary" />Toll-Free Support</h2>
+            <h2 className="text-xl font-semibold tracking-tight mb-4 flex items-center"><Phone className="mr-2 h-5 w-5 text-primary" />Support</h2>
             <p className="text-muted-foreground">For any questions, you can call the AP Government's general helpline.</p>
             <p className="text-2xl font-bold mt-2">1902</p>
           </section>

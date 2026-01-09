@@ -55,6 +55,9 @@ export default function MySchemesPage() {
         case 'unemployed':
             additionalSchemes.push('AP Skill Development Schemes (APSSDC & PMKVY)');
             break;
+        case 'employed':
+            additionalSchemes.push('AP Skill Development Schemes (APSSDC & PMKVY)');
+            break;
         default:
           break;
       }

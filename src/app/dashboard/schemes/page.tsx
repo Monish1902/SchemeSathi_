@@ -53,7 +53,7 @@ export default function MySchemesPage() {
             additionalSchemes.push('YSR Vahana Mitra Scheme (Auto Driver Sevalo)');
             break;
         case 'unemployed':
-            additionalSchemes.push('AP Skill Development Schemes (APSSDC & PMKVY)', 'INDIRAMMA Housing Scheme');
+            additionalSchemes.push('AP Skill Development Schemes (APSSDC & PMKVY)');
             break;
         case 'employed':
             additionalSchemes.push('AP Skill Development Schemes (APSSDC & PMKVY)');
@@ -77,6 +77,11 @@ export default function MySchemesPage() {
     // Combined Gender and Category schemes
     if (profile.gender === 'female' && (profile.category === 'BC' || profile.category === 'General')) {
         additionalSchemes.push('YSR Kapu Nestham');
+    }
+
+    // Housing-based scheme
+    if (profile.houseType === 'rented' || profile.houseType === 'none') {
+        additionalSchemes.push('INDIRAMMA Housing Scheme');
     }
 
     // Always include the universal health scheme

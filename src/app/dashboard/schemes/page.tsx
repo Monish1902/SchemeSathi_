@@ -53,32 +53,44 @@ export default function MySchemesPage() {
       ? recommendations.map(rec => rec.schemeName)
       : [];
 
-    let occupationBasedSchemes: string[] = [];
+    let additionalSchemes: string[] = [];
+
+    // Occupation-based schemes
     if (profile.occupation) {
       switch (profile.occupation) {
         case 'farmer':
-          occupationBasedSchemes.push('Annadata Sukhibhava Scheme', 'Rythu Bharosa Scheme');
+          additionalSchemes.push('Annadata Sukhibhava Scheme', 'Rythu Bharosa Scheme');
           break;
         case 'student':
-          occupationBasedSchemes.push('Dokka Seethamma Midday Meal Scheme (PM POSHAN)', 'AP Skill Development Schemes (APSSDC & PMKVY)', 'Thalliki Vandanam Scheme');
+          additionalSchemes.push('Dokka Seethamma Midday Meal Scheme (PM POSHAN)', 'AP Skill Development Schemes (APSSDC & PMKVY)', 'Thalliki Vandanam Scheme');
           break;
         case 'driver':
-            occupationBasedSchemes.push('YSR Vahana Mitra Scheme (Auto Driver Sevalo)');
+            additionalSchemes.push('YSR Vahana Mitra Scheme (Auto Driver Sevalo)');
             break;
         case 'unemployed':
-            occupationBasedSchemes.push('AP Skill Development Schemes (APSSDC & PMKVY)');
+            additionalSchemes.push('AP Skill Development Schemes (APSSDC & PMKVY)');
             break;
         default:
           break;
       }
     }
     
+    // Gender-based schemes
+    if (profile.gender === 'female') {
+        additionalSchemes.push('Aadabidda Nidhi Scheme', 'YSR Cheyutha Scheme');
+    }
+
+    // Combined Gender and Category schemes
+    if (profile.gender === 'female' && (profile.category === 'BC' || profile.category === 'General')) {
+        additionalSchemes.push('YSR Kapu Nestham');
+    }
+
     // Always include the universal health scheme
     const universalSchemes = ['Dr. NTR Vaidya Seva Scheme'];
 
     const allRecommendedSchemeNames = Array.from(new Set([
       ...aiRecommendedSchemeNames,
-      ...occupationBasedSchemes,
+      ...additionalSchemes,
       ...universalSchemes,
     ]));
 

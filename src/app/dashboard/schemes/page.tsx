@@ -62,7 +62,7 @@ export default function MySchemesPage() {
           additionalSchemes.push('Annadata Sukhibhava Scheme', 'Rythu Bharosa Scheme');
           break;
         case 'student':
-          additionalSchemes.push('Dokka Seethamma Midday Meal Scheme (PM POSHAN)', 'AP Skill Development Schemes (APSSDC & PMKVY)', 'Thalliki Vandanam Scheme');
+          additionalSchemes.push('Dokka Seethamma Midday Meal Scheme (PM POSHAN)', 'AP Skill Development Schemes (APSSDC & PMKVY)', 'Thalliki Vandanam Scheme', 'Jagananna Vidya Deevena');
           break;
         case 'driver':
             additionalSchemes.push('YSR Vahana Mitra Scheme (Auto Driver Sevalo)');

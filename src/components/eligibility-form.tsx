@@ -452,9 +452,9 @@ export function EligibilityForm() {
                           <FormLabel>Education Qualification</FormLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
                               <FormControl>
-                                  <SelectTrigger>
+                                <SelectTrigger>
                                   <SelectValue placeholder="Select your education level" />
-                                  </SelectTrigger>
+                                </SelectTrigger>
                               </FormControl>
                               <SelectContent>
                                   <SelectItem value="uneducated">Uneducated</SelectItem>
@@ -510,5 +510,3 @@ export function EligibilityForm() {
     </Card>
   );
 }
-
-    

@@ -58,6 +58,9 @@ export default function MySchemesPage() {
         case 'employed':
             additionalSchemes.push('AP Skill Development Schemes (APSSDC & PMKVY)');
             break;
+        case 'fisherman':
+            additionalSchemes.push('YSR Matsyakara Bharosa');
+            break;
         default:
           break;
       }

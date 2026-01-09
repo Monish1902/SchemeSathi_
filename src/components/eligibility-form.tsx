@@ -462,38 +462,7 @@ export function EligibilityForm() {
                               <FormControl>
                                   <SelectTrigger>
                                   <SelectValue placeholder="Select your education level" />
-                                  </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                  <SelectItem value="uneducated">Uneducated</SelectItem>
-                                  <SelectItem value="1-10">1st to 10th</SelectItem>
-                                  <SelectItem value="inter">Intermediate</SelectItem>
-                                  <SelectItem value="bachelors">Bachelor's Degree</SelectItem>
-                                  <SelectItem value="masters">Master's Degree</SelectItem>
-                              </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-
-            <Button type="submit" disabled={loading || !user} className="w-full md:w-auto bg-accent text-accent-foreground hover:bg-accent/90 mt-8">
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                'Save Profile & Find Schemes'
-              )}
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
-  );
-}
+                                  </T_SECOND_ONE' is assigned a value but never used.\'\'\'
+another = "Yo!"
+'''))
+```

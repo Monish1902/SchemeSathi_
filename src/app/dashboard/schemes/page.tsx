@@ -13,7 +13,6 @@ import { Lightbulb, ArrowRight, FileText } from 'lucide-react';
 import { SchemeCard } from '@/components/scheme-card';
 import { useUser, useFirestore } from '@/firebase';
 import { useEffect, useState, useMemo } from 'react';
-import { RecommendSchemesOutput } from '@/ai/flows/recommend-schemes-based-on-eligibility';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { getUserProfile } from '@/lib/user-profile-service';
@@ -22,19 +21,9 @@ import type { FormSchemaType } from '@/components/eligibility-form';
 export default function MySchemesPage() {
   const { user } = useUser();
   const firestore = useFirestore();
-  const [recommendations, setRecommendations] = useState<RecommendSchemesOutput | null>(null);
   const [profile, setProfile] = useState<FormSchemaType | null>(null);
 
   useEffect(() => {
-    try {
-      const savedRecs = localStorage.getItem('schemeRecommendations');
-      if (savedRecs) {
-        setRecommendations(JSON.parse(savedRecs));
-      }
-    } catch (error) {
-      console.error("Could not load recommendations from localStorage", error);
-    }
-
     async function fetchProfile() {
       if (user && firestore) {
         const userProfile = await getUserProfile(firestore, user.uid);
@@ -48,10 +37,6 @@ export default function MySchemesPage() {
     if (!profile) {
       return [];
     }
-
-    const aiRecommendedSchemeNames = recommendations
-      ? recommendations.map(rec => rec.schemeName)
-      : [];
 
     let additionalSchemes: string[] = [];
 
@@ -89,7 +74,6 @@ export default function MySchemesPage() {
     const universalSchemes = ['Dr. NTR Vaidya Seva Scheme'];
 
     const allRecommendedSchemeNames = Array.from(new Set([
-      ...aiRecommendedSchemeNames,
       ...additionalSchemes,
       ...universalSchemes,
     ]));
@@ -97,7 +81,7 @@ export default function MySchemesPage() {
     return schemes.filter(scheme =>
       allRecommendedSchemeNames.includes(scheme.schemeName)
     );
-  }, [profile, recommendations]);
+  }, [profile]);
 
 
   return (
@@ -121,7 +105,7 @@ export default function MySchemesPage() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight">My Eligible Schemes</h1>
         <p className="text-muted-foreground">
-          A list of government schemes you may be eligible for based on your profile and AI recommendations.
+          A list of government schemes you may be eligible for based on your profile.
         </p>
       </div>
         {recommendedSchemes.length > 0 ? (

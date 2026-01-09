@@ -28,7 +28,6 @@ import { useEffect, useState, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Loader2 } from 'lucide-react';
-import { recommendSchemes } from '@/ai/flows/recommend-schemes-based-on-eligibility';
 import { useRouter } from 'next/navigation';
 import { useUser, useFirestore } from '@/firebase';
 import { saveUserProfile, getUserProfile } from '@/lib/user-profile-service';
@@ -149,24 +148,6 @@ export function EligibilityForm() {
         title: 'Profile Saved!',
         description: 'Your information has been successfully updated.',
       });
-
-      // After saving, fetch AI recommendations
-      try {
-        const recommendations = await recommendSchemes(values);
-        localStorage.setItem('schemeRecommendations', JSON.stringify(recommendations));
-        toast({
-            title: 'Recommendations Updated!',
-            description: 'New scheme recommendations are available for you.',
-        });
-      } catch (aiError) {
-          console.error('AI recommendation error:', aiError);
-          toast({
-            variant: 'destructive',
-            title: 'AI Assistant Error',
-            description: "Could not fetch AI recommendations, but your profile was saved.",
-            duration: 9000,
-          });
-      }
     } catch (saveError) {
       console.error('Profile saving error:', saveError);
       // The error emitter in saveUserProfile will have already triggered the global error display
@@ -176,9 +157,7 @@ export function EligibilityForm() {
         description: "Your profile could not be saved. Please check your connection and try again.",
       });
     } finally {
-      // This will now run regardless of success or failure
       setLoading(false);
-      // Redirect to the schemes page to see updated results
       router.push('/dashboard/schemes');
     }
   }

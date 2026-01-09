@@ -49,7 +49,7 @@ export const formSchema = z.object({
   mandal: z.string().min(1, { message: 'Mandal is required.' }),
   category: z.enum(['SC', 'ST', 'BC', 'EBC', 'Minority', 'Brahmin', 'EWS', 'General'], { required_error: 'Category is required.' }),
   disability: z.boolean().default(false),
-  occupation: z.enum(['student', 'employed', 'unemployed', 'farmer', 'driver', 'weaver', 'daily worker', 'other', 'fisherman', 'housewife'], { required_error: 'Occupation is required.' }),
+  occupation: z.enum(['student', 'employed', 'unemployed', 'farmer', 'driver', 'other', 'fisherman'], { required_error: 'Occupation is required.' }),
   landHolding: z.string().optional(),
   vehiclesOwned: z.boolean().default(false).describe('Whether the user owns a four-wheeler vehicle.'),
   houseType: z.enum(['owned', 'rented', 'none'], { required_error: 'House ownership status is required.' }),
@@ -423,10 +423,7 @@ export function EligibilityForm() {
                                   <SelectItem value="unemployed">Unemployed</SelectItem>
                                   <SelectItem value="farmer">Farmer</SelectItem>
                                   <SelectItem value="driver">Driver</SelectItem>
-                                  <SelectItem value="weaver">Weaver</SelectItem>
-                                  <SelectItem value="daily worker">Daily Worker</SelectItem>
                                   <SelectItem value="fisherman">Fisherman</SelectItem>
-                                  <SelectItem value="housewife">Housewife</SelectItem>
                                   <SelectItem value="other">Other</SelectItem>
                               </SelectContent>
                           </Select>

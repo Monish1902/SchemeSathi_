@@ -31,7 +31,7 @@ export const schemes: Scheme[] = [
     applicablePortal: 'https://annadatasukhibhava.ap.gov.in',
     eligibilityCriteria: {
         ageRange: { minimumAge: 18, maximumAge: 100 },
-        incomeLimit: 999999, // No practical income limit for this
+        incomeLimit: 250000,
         socialCategoryRequired: []
     },
     documentsRequired: ["Aadhaar Card", "Land Ownership Document", "Bank Account Passbook"],
@@ -79,7 +79,7 @@ export const schemes: Scheme[] = [
     applicablePortal: 'https://drntrvaidyaseva.ap.gov.in',
     eligibilityCriteria: {
         ageRange: { minimumAge: 0, maximumAge: 100 },
-        incomeLimit: 999999, // Universal for residents
+        incomeLimit: 500000,
         socialCategoryRequired: []
     },
     documentsRequired: ["Aadhaar Card", "White Ration Card", "Health Card"],
@@ -127,7 +127,7 @@ export const schemes: Scheme[] = [
     applicablePortal: 'https://naipunyam.ap.gov.in',
     eligibilityCriteria: {
         ageRange: { minimumAge: 18, maximumAge: 35 },
-        incomeLimit: 999999,
+        incomeLimit: 250000,
         socialCategoryRequired: []
     },
     documentsRequired: ["Aadhaar Card", "Educational Certificate", "Identity Proof"],
@@ -175,7 +175,7 @@ export const schemes: Scheme[] = [
     applicablePortal: 'https://gramawardsachivalayam.ap.gov.in/GSWS/Home/Main',
     eligibilityCriteria: {
         ageRange: { minimumAge: 18, maximumAge: 100 },
-        incomeLimit: 999999,
+        incomeLimit: 250000,
         socialCategoryRequired: []
     },
     documentsRequired: ["Aadhaar Card", "Land ownership documents (Pattadar Passbook)", "Bank account details"],
@@ -239,7 +239,7 @@ export const schemes: Scheme[] = [
     applicablePortal: 'https://apfisheries.gov.in/',
     eligibilityCriteria: {
         ageRange: { minimumAge: 18, maximumAge: 60 },
-        incomeLimit: 999999,
+        incomeLimit: 150000,
         socialCategoryRequired: []
     },
     documentsRequired: ["Aadhaar Card", "Fisherman Biometric ID Card", "Boat Registration Certificate"],

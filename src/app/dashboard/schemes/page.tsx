@@ -38,63 +38,69 @@ export default function MySchemesPage() {
       return [];
     }
 
-    let additionalSchemes: string[] = [];
+    return schemes.filter((scheme) => {
+      const { eligibilityCriteria: crit } = scheme;
+      if (!crit) return true;
 
-    // Occupation-based schemes
-    if (profile.occupation) {
-      switch (profile.occupation) {
-        case 'farmer':
-          additionalSchemes.push('Annadata Sukhibhava Scheme', 'Rythu Bharosa Scheme');
-          break;
-        case 'student':
-          additionalSchemes.push('Dokka Seethamma Midday Meal Scheme (PM POSHAN)', 'AP Skill Development Schemes (APSSDC & PMKVY)', 'Thalliki Vandanam Scheme', 'Jagananna Vidya Deevena');
-          break;
-        case 'driver':
-            additionalSchemes.push('YSR Vahana Mitra Scheme (Auto Driver Sevalo)');
-            break;
-        case 'unemployed':
-            additionalSchemes.push('AP Skill Development Schemes (APSSDC & PMKVY)');
-            break;
-        case 'employed':
-            additionalSchemes.push('AP Skill Development Schemes (APSSDC & PMKVY)');
-            break;
-        case 'fisherman':
-            additionalSchemes.push('YSR Matsyakara Bharosa');
-            break;
-        case 'other':
-            additionalSchemes.push('NTR Bharosa Pension Scheme', 'YSR Pension Kanuka');
-            break;
-        default:
-          break;
+      // 1. Universal Schemes (e.g., Healthcare)
+      if (scheme.category === 'Health') {
+        if (crit.incomeLimit && profile.annualIncome && profile.annualIncome > crit.incomeLimit) {
+          return false;
+        }
+        return true;
       }
-    }
-    
-    // Gender-based schemes
-    if (profile.gender === 'female') {
-        additionalSchemes.push('Aadabidda Nidhi Scheme', 'YSR Cheyutha Scheme');
-    }
 
-    // Combined Gender and Category schemes
-    if (profile.gender === 'female' && (profile.category === 'BC' || profile.category === 'General')) {
-        additionalSchemes.push('YSR Kapu Nestham');
-    }
+      // 2. Age check
+      if (profile.age && crit.ageRange) {
+        if (profile.age < crit.ageRange.minimumAge || profile.age > crit.ageRange.maximumAge) {
+          return false;
+        }
+      }
 
-    // Housing-based scheme
-    if (profile.houseType === 'rented' || profile.houseType === 'none') {
-        additionalSchemes.push('INDIRAMMA Housing Scheme');
-    }
+      // 3. Gender check
+      if (crit.genderSpecific && crit.genderSpecific !== 'all') {
+        if (profile.gender && profile.gender.toLowerCase() !== crit.genderSpecific.toLowerCase()) {
+          return false;
+        }
+      }
 
-    // Always include the universal health scheme
-    const universalSchemes = ['Dr. NTR Vaidya Seva Scheme'];
+      // 4. Disability requirement
+      if (crit.disabilityRequired) {
+        if (!profile.disability) {
+          return false;
+        }
+      }
 
-    const allRecommendedSchemeNames = Array.from(new Set([
-      ...additionalSchemes,
-      ...universalSchemes,
-    ]));
+      // 5. Social Category requirement
+      if (crit.socialCategoryRequired && crit.socialCategoryRequired.length > 0) {
+        if (profile.category && !crit.socialCategoryRequired.includes(profile.category)) {
+          return false;
+        }
+      }
 
-    return schemes.filter(scheme =>
-      allRecommendedSchemeNames.includes(scheme.schemeName)
-    );
+      // 6. Annual Income limit
+      if (crit.incomeLimit && profile.annualIncome) {
+        if (profile.annualIncome > crit.incomeLimit) {
+          return false;
+        }
+      }
+
+      // 7. Housing Status requirement
+      if (crit.housingStatus && crit.housingStatus.length > 0) {
+        if (profile.houseType && !crit.housingStatus.includes(profile.houseType)) {
+          return false;
+        }
+      }
+
+      // 8. Occupation / Employment Status requirement
+      if (crit.employmentStatus && crit.employmentStatus.length > 0) {
+        if (profile.occupation && !crit.employmentStatus.includes(profile.occupation)) {
+          return false;
+        }
+      }
+
+      return true;
+    });
   }, [profile]);
 
 

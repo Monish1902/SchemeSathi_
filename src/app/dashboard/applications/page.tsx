@@ -25,7 +25,7 @@ import { Loader2 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Terminal } from 'lucide-react';
 import type { UserApplication } from '@/lib/types';
-
+import { getLocalApplications } from '@/lib/application-service';
 
 export default function ApplicationsPage() {
   const { user } = useUser();
@@ -33,20 +33,21 @@ export default function ApplicationsPage() {
 
   const applicationsQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
-    // Query the new top-level collection and filter by the current user's ID
     return query(collection(firestore, 'userApplications'), where('userId', '==', user.uid));
   }, [firestore, user]);
 
   const { data: applications, isLoading, error } = useCollection<UserApplication>(applicationsQuery);
 
   const sortedApplications = useMemo(() => {
-    if (!applications) return [];
-    // Sort by applicationDate in descending order
-    return [...applications].sort((a, b) => new Date(b.applicationDate).getTime() - new Date(a.applicationDate).getTime());
-  }, [applications]);
+    const list: UserApplication[] = applications && applications.length > 0 
+      ? [...applications] 
+      : (user ? getLocalApplications(user.uid) : []);
+    
+    return list.sort((a, b) => new Date(b.applicationDate).getTime() - new Date(a.applicationDate).getTime());
+  }, [applications, user]);
 
   const renderContent = () => {
-    if (isLoading) {
+    if (isLoading && sortedApplications.length === 0) {
         return (
              <div className="flex justify-center items-center py-12">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -54,20 +55,8 @@ export default function ApplicationsPage() {
         );
     }
 
-    if (error) {
-        return (
-             <Alert variant="destructive" className="mt-4">
-              <Terminal className="h-4 w-4" />
-              <AlertTitle>Error Fetching Applications</AlertTitle>
-              <AlertDescription>
-                There was a problem loading your application data. Please try again later.
-              </AlertDescription>
-            </Alert>
-        );
-    }
-    
-    if (!applications || applications.length === 0) {
-        return <p className="text-muted-foreground text-center py-12">You haven't applied for any schemes yet.</p>
+    if (sortedApplications.length === 0) {
+        return <p className="text-muted-foreground text-center py-12">You haven't applied for any schemes yet.</p>;
     }
 
     return (

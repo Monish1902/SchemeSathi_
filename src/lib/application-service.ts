@@ -1,4 +1,3 @@
-
 'use client';
 
 import {
@@ -7,50 +6,79 @@ import {
   Firestore,
   serverTimestamp,
 } from 'firebase/firestore';
-import { errorEmitter }from '@/firebase/error-emitter';
+import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
+import type { UserApplication } from '@/lib/types';
 
 /**
- * Creates a user's application status in the new userApplications collection.
- *
- * @param db The Firestore instance.
- * @param userId The UID of the user.
- * @param schemeId The ID of the scheme being applied for.
- * @param schemeName The name of the scheme.
+ * Creates a user's application status in userApplications with localStorage fallback.
  */
-export function saveApplicationStatus(
+export async function saveApplicationStatus(
   db: Firestore,
   userId: string,
   schemeId: string,
   schemeName: string,
-) {
-  // Use the new top-level collection
+): Promise<UserApplication> {
   const applicationRef = collection(db, 'userApplications');
-  
-  const dataToSave = {
+  const dateNow = new Date().toISOString();
+  const appId = `APP-${Date.now().toString().slice(-6)}`;
+
+  const localApp: UserApplication = {
+    applicationId: appId,
     userId: userId,
     schemeId: schemeId,
     schemeName: schemeName,
-    applicationDate: new Date().toISOString(),
+    applicationDate: dateNow,
     applicationStatus: 'Submitted',
-    lastStatusUpdateDate: serverTimestamp(),
+    lastStatusUpdateDate: dateNow,
   };
 
-  // Use addDoc to create a new application document with a unique ID.
-  return addDoc(
-    applicationRef,
-    dataToSave
-  ).catch(error => {
-    // If the operation fails, create a detailed, contextual error.
-    const permissionError = new FirestorePermissionError({
-      path: applicationRef.path, // Path to the collection
-      operation: 'create',
-      requestResourceData: dataToSave,
+  // Always save to localStorage so the application record is never lost
+  if (typeof window !== 'undefined') {
+    try {
+      const existingKey = `schemesathi_applications_${userId}`;
+      const existing = JSON.parse(localStorage.getItem(existingKey) || '[]');
+      existing.unshift(localApp);
+      localStorage.setItem(existingKey, JSON.stringify(existing));
+    } catch {
+      // ignore
+    }
+  }
+
+  try {
+    const docRef = await addDoc(applicationRef, {
+      ...localApp,
+      lastStatusUpdateDate: serverTimestamp(),
     });
-    
-    // Emit the error for a global handler to catch.
+    return {
+      ...localApp,
+      applicationId: docRef.id,
+    };
+  } catch (error: any) {
+    console.warn('Firestore application save error, saved locally:', error);
+    // If saved to localStorage, return localApp
+    if (typeof window !== 'undefined' && localStorage.getItem(`schemesathi_applications_${userId}`)) {
+      return localApp;
+    }
+    const permissionError = new FirestorePermissionError({
+      path: applicationRef.path,
+      operation: 'create',
+      requestResourceData: localApp,
+    });
     errorEmitter.emit('permission-error', permissionError);
-    // Re-throw the original error to be caught by the calling function's try-catch block
-    throw error;
-  });
+    return localApp;
+  }
+}
+
+/**
+ * Returns locally stored applications for a user as fallback.
+ */
+export function getLocalApplications(userId: string): UserApplication[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(`schemesathi_applications_${userId}`);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
 }

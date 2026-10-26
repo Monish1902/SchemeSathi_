@@ -1,42 +1,44 @@
-
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // Users can only read/write their own data
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Users can read and write their own profile
     match /users/{userId} {
-      // Allow a user to get their own document, but not list all users.
-      allow get: if request.auth.uid == userId;
-      allow list: if false;
-      allow write: if request.auth.uid == userId;
-      allow update: if request.auth.uid == userId && 
-                       (request.resource.data.accountCreatedAt == resource.data.accountCreatedAt); // Prevent modification of creation time
+      allow read, write: if isOwner(userId);
     }
-    
-    // Schemes are readable by all authenticated users
+
+    // Government schemes catalog - readable by everyone
     match /schemes/{schemeId} {
-      allow read: if request.auth.uid != null;
-      allow write: if false; // Disallow client-side writes
+      allow read: if true;
+      allow write: if false;
     }
-    
-    // Eligibility assessments belong to specific users
+
+    // Eligibility assessments belong to individual users
     match /eligibilityAssessments/{assessmentId} {
-      allow read: if request.auth.uid == resource.data.userId;
-      allow create: if request.auth.uid == request.resource.data.userId;
-      allow update: if request.auth.uid == resource.data.userId;
+      allow read: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid);
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
     }
-    
-    // User applications
+
+    // User scheme applications
     match /userApplications/{applicationId} {
-      allow read: if request.auth.uid == resource.data.userId;
-      allow create: if request.auth.uid == request.resource.data.userId;
-      allow update: if request.auth.uid == resource.data.userId;
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid);
     }
-    
-    // Scheme updates are readable by all authenticated users
+
+    // Scheme updates are readable by everyone
     match /schemeUpdates/{updateId} {
-      allow read: if request.auth.uid != null;
-      allow write: if false; // Disallow client-side writes
+      allow read: if true;
+      allow write: if false;
     }
   }
 }

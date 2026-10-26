@@ -25,7 +25,8 @@ import { Input } from '@/components/ui/input';
 import { useAuth } from '@/firebase';
 import { initiateGoogleSignIn } from '@/firebase/non-blocking-login';
 import { useToast } from '@/hooks/use-toast';
-import { Chrome, Loader2 } from 'lucide-react';
+import { Chrome, Loader2, AlertCircle, ExternalLink } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import Link from 'next/link';
 import { useState } from 'react';
 import { signInWithEmailAndPassword, AuthErrorCodes } from 'firebase/auth';
@@ -52,31 +53,44 @@ export function LoginForm() {
     },
   });
 
+  const [authError, setAuthError] = useState<string | null>(null);
+
   const handleGoogleSignIn = () => {
     initiateGoogleSignIn(auth);
   };
   
   async function onSubmit(values: FormSchemaType) {
     setLoading(true);
+    setAuthError(null);
     try {
       await signInWithEmailAndPassword(auth, values.email, values.password);
       // onAuthStateChanged in layout will handle redirect
     } catch (error: any) {
+      let title = 'Login Failed';
       let description = 'An unexpected error occurred. Please try again.';
-      // Catch specific Firebase auth errors for better user feedback.
-      if (error.code === AuthErrorCodes.USER_DELETED || error.code === AuthErrorCodes.INVALID_CREDENTIAL) {
-         description = 'Invalid email or password. Please check your credentials and try again.';
+
+      if (error.code === 'auth/operation-not-allowed' || error.message?.includes('operation-not-allowed')) {
+        title = 'Email/Password Sign-In Disabled';
+        description =
+          'Email/Password provider is not enabled in your Firebase console. Please go to Firebase Console > Authentication > Sign-in method and enable Email/Password.';
+        setAuthError(description);
+      } else if (error.code === AuthErrorCodes.USER_DELETED || error.code === AuthErrorCodes.INVALID_CREDENTIAL || error.code === 'auth/invalid-credential') {
+        description = 'Invalid email or password. Please check your credentials and try again.';
+      } else if (error.code === 'auth/network-request-failed') {
+        description = 'Network error. Please check your internet connection.';
+      } else if (error.message) {
+        description = error.message;
       }
+
       toast({
         variant: 'destructive',
-        title: 'Login Failed',
+        title,
         description,
       });
     } finally {
       setLoading(false);
     }
   }
-
 
   return (
     <Card className="w-full max-w-sm">
@@ -87,6 +101,25 @@ export function LoginForm() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        {authError && (
+          <Alert variant="destructive" className="border-red-500/50 bg-destructive/10 text-destructive dark:text-red-400">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle className="font-semibold text-sm">Action Required in Firebase Console</AlertTitle>
+            <AlertDescription className="text-xs space-y-2 mt-1">
+              <p>{authError}</p>
+              <div className="pt-1">
+                <a
+                  href="https://console.firebase.google.com/project/schemesathigdg/authentication/providers"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 font-semibold underline hover:opacity-80"
+                >
+                  Enable Email/Password in Console <ExternalLink className="h-3 w-3" />
+                </a>
+              </div>
+            </AlertDescription>
+          </Alert>
+        )}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField

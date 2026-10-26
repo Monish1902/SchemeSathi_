@@ -25,7 +25,8 @@ import { Input } from '@/components/ui/input';
 import { useAuth } from '@/firebase';
 import { initiateGoogleSignIn } from '@/firebase/non-blocking-login';
 import { useToast } from '@/hooks/use-toast';
-import { Chrome, Loader2 } from 'lucide-react';
+import { Chrome, Loader2, AlertCircle, ExternalLink } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import Link from 'next/link';
 import { useState } from 'react';
 import {
@@ -62,8 +63,11 @@ export function SignUpForm() {
     initiateGoogleSignIn(auth);
   };
 
+  const [authError, setAuthError] = useState<string | null>(null);
+
   async function onSubmit(values: FormSchemaType) {
     setLoading(true);
+    setAuthError(null);
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -79,19 +83,31 @@ export function SignUpForm() {
       // onAuthStateChanged in layout will handle redirect
     } catch (error: any) {
       console.error('Sign up error:', error);
+      let title = 'Sign Up Failed';
       let description = 'An unexpected error occurred. Please try again.';
-      if (error.code === AuthErrorCodes.EMAIL_EXISTS) {
+
+      if (error.code === 'auth/operation-not-allowed' || error.message?.includes('operation-not-allowed')) {
+        title = 'Email/Password Sign-In Disabled';
+        description =
+          'Email/Password provider is not enabled in your Firebase console. Please go to Firebase Console > Authentication > Sign-in method and enable Email/Password.';
+        setAuthError(description);
+      } else if (error.code === AuthErrorCodes.EMAIL_EXISTS || error.code === 'auth/email-already-in-use') {
         description = 'This email is already in use. Please try logging in instead.';
-      } else if (error.code === AuthErrorCodes.WEAK_PASSWORD) {
-        description = 'The password is too weak. Please choose a stronger password.';
+      } else if (error.code === AuthErrorCodes.WEAK_PASSWORD || error.code === 'auth/weak-password') {
+        description = 'The password is too weak. Please choose a password with at least 6 characters.';
+      } else if (error.code === 'auth/network-request-failed') {
+        description = 'Network error. Please check your internet connection.';
+      } else if (error.message) {
+        description = error.message;
       }
+
       toast({
         variant: 'destructive',
-        title: 'Sign Up Failed',
+        title,
         description: (
           <div>
             {description}{' '}
-            {error.code === AuthErrorCodes.EMAIL_EXISTS && (
+            {(error.code === AuthErrorCodes.EMAIL_EXISTS || error.code === 'auth/email-already-in-use') && (
               <Link href="/login" className="font-bold text-white underline">
                 Login here.
               </Link>
@@ -113,6 +129,25 @@ export function SignUpForm() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        {authError && (
+          <Alert variant="destructive" className="border-red-500/50 bg-destructive/10 text-destructive dark:text-red-400">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle className="font-semibold text-sm">Action Required in Firebase Console</AlertTitle>
+            <AlertDescription className="text-xs space-y-2 mt-1">
+              <p>{authError}</p>
+              <div className="pt-1">
+                <a
+                  href="https://console.firebase.google.com/project/schemesathigdg/authentication/providers"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 font-semibold underline hover:opacity-80"
+                >
+                  Enable Email/Password in Console <ExternalLink className="h-3 w-3" />
+                </a>
+              </div>
+            </AlertDescription>
+          </Alert>
+        )}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
